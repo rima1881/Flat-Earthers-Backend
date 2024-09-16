@@ -1,6 +1,0 @@
-@Flat_Earthers_Backend_HostAddress = http://localhost:5140
-
-GET {{Flat_Earthers_Backend_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

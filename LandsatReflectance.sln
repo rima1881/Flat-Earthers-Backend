@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LandsatReflectance.Backend", "LandsatReflectance.Backend\LandsatReflectance.Backend.csproj", "{080D9AB2-5444-4CB0-9CA0-6D180625CA3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LandsatReflectance.Backend.Tests", "LandsatReflectance.Backend.Tests\LandsatReflectance.Backend.Tests.csproj", "{5A98CF5A-C76C-4545-B95B-091D981135BC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{080D9AB2-5444-4CB0-9CA0-6D180625CA3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{080D9AB2-5444-4CB0-9CA0-6D180625CA3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{080D9AB2-5444-4CB0-9CA0-6D180625CA3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{080D9AB2-5444-4CB0-9CA0-6D180625CA3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A98CF5A-C76C-4545-B95B-091D981135BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A98CF5A-C76C-4545-B95B-091D981135BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A98CF5A-C76C-4545-B95B-091D981135BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A98CF5A-C76C-4545-B95B-091D981135BC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
