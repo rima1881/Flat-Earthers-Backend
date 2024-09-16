@@ -21,4 +21,14 @@
         <Using Include="NUnit.Framework"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Data\Endpoints\SampleResponses\scene-search-1.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\LandsatReflectance.Backend\LandsatReflectance.Backend.csproj" />
+    </ItemGroup>
+
 </Project>
