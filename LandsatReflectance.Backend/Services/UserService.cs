@@ -6,32 +6,70 @@ namespace LandsatReflectance.Backend.Services;
 
 public class UserService
 {
-    private static readonly string JsonSaveFilePath = @"Files\users.json";
+    private readonly Lazy<User[]> _users = new(InitUsers);
 
-    private User[] _users = [];
+    public User[] Users => _users.Value;
 
-    public User[] Users
-    {
-        get => _users;
-        private set => _users = value;
-    }
-    
     
     public UserService()
-    {
-        Users = GetUsers();
-    }
+    { }
 
-    private static User[] GetUsers()
+    private static User[] InitUsers()
     {
-        if (!File.Exists(JsonSaveFilePath))
+        var selectedRegion1 = new SelectedRegion
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(JsonSaveFilePath) ?? "");
-            File.WriteAllText(JsonSaveFilePath, "[]");
-        }
+            Path = "14",
+            Row = "27",
+            NotificationOffset = TimeSpan.MaxValue
+        };
+        var selectedRegion2 = new SelectedRegion
+        {
+            Path = "19",
+            Row = "11",
+            NotificationOffset = TimeSpan.MaxValue
+        };
+        var selectedRegion3 = new SelectedRegion
+        {
+            Path = "190",
+            Row = "26",
+            NotificationOffset = TimeSpan.MaxValue
+        };
+        var selectedRegion4 = new SelectedRegion
+        {
+            Path = "143",
+            Row = "50",
+            NotificationOffset = TimeSpan.MaxValue
+        };
+        var selectedRegion5 = new SelectedRegion
+        {
+            Path = "160",
+            Row = "37",
+            NotificationOffset = TimeSpan.MaxValue
+        };
+        var selectedRegion6 = new SelectedRegion
+        {
+            Path = "116",
+            Row = "50",
+            NotificationOffset = TimeSpan.MaxValue
+        };
+        
+        
+        var user1 = new User
+        {
+            Email = "amir@gmail.com",
+            SelectedRegions = [selectedRegion1, selectedRegion2]
+        };
+        var user2 = new User
+        {
+            Email = "joyal@gmail.com",
+            SelectedRegions = [selectedRegion3, selectedRegion1]
+        };
+        var user3 = new User
+        {
+            Email = "umar@gmail.com",
+            SelectedRegions = [selectedRegion4, selectedRegion5, selectedRegion6]
+        };
 
-        var fullPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "", JsonSaveFilePath);
-        var rawJson = File.ReadAllText(fullPath);
-        return JsonSerializer.Deserialize<User[]>(rawJson) ?? [];
+        return [ user1, user2, user3 ];
     }
 }

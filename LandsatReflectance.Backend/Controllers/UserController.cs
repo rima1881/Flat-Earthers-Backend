@@ -1,6 +1,7 @@
 ﻿using LandsatReflectance.Backend.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace LandsatReflectance.Backend.Controllers;
 
@@ -16,7 +17,8 @@ public class UserController : ControllerBase
     }
 
 
-    [HttpGet("GetUserInfo", Name = "GetUserInfo")]
+    [HttpGet]
+    [SwaggerOperation(Summary = "Gets user information")]
     public IActionResult GetUserInfo(
         [FromQuery(Name = "email")] string email = "")
     {
