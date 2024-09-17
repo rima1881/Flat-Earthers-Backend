@@ -1,11 +1,29 @@
 ﻿using System.Text.Json.Serialization;
 using LandsatReflectance.Backend.Models.UsgsApi.Types;
+using LandsatReflectance.Backend.Models.UsgsApi.Types.Request;
 
 namespace LandsatReflectance.Backend.Models.UsgsApi.Endpoints;
 
+[Serializable]
 public class SceneSearchRequest
 {
+    public string DatasetName { get; set; } = string.Empty;
+    public int MaxResults { get; set; } = 100;
+    public int StartingNumber { get; set; }
     
+    public string MetadataType { get; set; } = "full";
+    public string? SortField { get; set; }
+    public string? SortDirection { get; set; }
+    public string? CompareListName { get; set; }
+    public string? BulkListName { get; set; }
+    public string? OrderListName { get; set; }
+    public string? ExcludeListName { get; set; }
+
+    public bool UseCustomization { get; set; } = false;
+    public bool IncludeNullMetadataValues { get; set; } = false;
+    
+    public SortCustomization? SortCustomization { get; set; } = new();
+    public SceneFilter? SceneFilter { get; set; } = new();
 }
 
 [Serializable]

@@ -9,6 +9,9 @@ namespace LandsatReflectance.Backend.Utils;
 
 public class UsgsApiResponseConverter<T> : JsonConverter<UsgsApiResponse<T>> where T : class, IUsgsApiResponseData
 {
+    
+#region Read/Deserialization
+
     public override UsgsApiResponse<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType != JsonTokenType.StartObject)
@@ -39,7 +42,7 @@ public class UsgsApiResponseConverter<T> : JsonConverter<UsgsApiResponse<T>> whe
         throw new JsonException("Reached the end of the reader without encountering a \"JsonTokenType.StartObject\"");
     }
 
-    private void DeserializeProperty(ref Utf8JsonReader reader, JsonSerializerOptions options, string propertyName, ref UsgsApiResponse<T> usgsApiResponse)
+    private static void DeserializeProperty(ref Utf8JsonReader reader, JsonSerializerOptions options, string propertyName, ref UsgsApiResponse<T> usgsApiResponse)
     {
         switch (propertyName)
         {
@@ -63,7 +66,7 @@ public class UsgsApiResponseConverter<T> : JsonConverter<UsgsApiResponse<T>> whe
         }
     }
 
-    private void HandleDataDeserialization(ref Utf8JsonReader reader, JsonSerializerOptions options, ref UsgsApiResponse<T> usgsApiResponse)
+    private static void HandleDataDeserialization(ref Utf8JsonReader reader, JsonSerializerOptions options, ref UsgsApiResponse<T> usgsApiResponse)
     {
         using var jsonDocument = JsonDocument.ParseValue(ref reader);
         string rawJson = jsonDocument.RootElement.GetRawText();
@@ -75,19 +78,17 @@ public class UsgsApiResponseConverter<T> : JsonConverter<UsgsApiResponse<T>> whe
                 usgsApiResponse.Data = sceneSearchResponse is not null ? (T)(object)sceneSearchResponse : null;
                 break;
             case var t when t == typeof(LoginTokenResponse):
-                var loginTokenResponse = JsonSerializer.Deserialize<SceneSearchResponse>(rawJson, options);
-                usgsApiResponse.Data = loginTokenResponse is not null ? (T)(object)loginTokenResponse : null;
+                var loginTokenResponse = new LoginTokenResponse
+                {
+                    AuthToken = JsonSerializer.Deserialize<string>(rawJson, options) ?? ""
+                };
+                usgsApiResponse.Data = (T)(object)loginTokenResponse;
                 break;
         }
-        /*
-        usgsApiResponse.Data = typeof(T) switch
-        {
-            var t when t == typeof(SceneSearchResponse) => (T)(object)JsonSerializer.Deserialize<SceneSearchResponse>(rawJson, options)!,
-            var t when t == typeof(LoginTokenResponse) => (T)(object)JsonSerializer.Deserialize<LoginTokenResponse>(rawJson, options)!,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-         */
     }
+
+#endregion
+
 
     public override void Write(Utf8JsonWriter writer, UsgsApiResponse<T> value, JsonSerializerOptions options)
     {

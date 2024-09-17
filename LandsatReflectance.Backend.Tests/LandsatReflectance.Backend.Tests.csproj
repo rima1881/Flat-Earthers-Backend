@@ -25,6 +25,9 @@
       <None Update="Data\Endpoints\SampleResponses\scene-search-1.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="Data\Endpoints\SampleResponses\login-token-1.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
