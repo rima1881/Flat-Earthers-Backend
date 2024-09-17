@@ -1,4 +1,7 @@
-﻿namespace LandsatReflectance.Backend.Models.UsgsApi;
+﻿using System.Text.Json.Serialization;
+using LandsatReflectance.Backend.Utils;
+
+namespace LandsatReflectance.Backend.Models.UsgsApi;
 
 // Responses from the API have the base structure defined in 'UsgsApiResponse'.
 // The 'Data' property differs depending on the endpoint we're querying.
@@ -8,11 +11,11 @@
 public interface IUsgsApiResponseData
 { }
 
-public class UsgsApiResponse<T> where T : IUsgsApiResponseData
+public class UsgsApiResponse<T> where T : class, IUsgsApiResponseData 
 {
     public int RequestId { get; set; }
-    public string Stable { get; set; } = string.Empty;
-    public T? Data { get; set; }
+    public string Version { get; set; } = string.Empty;
+    public T? Data { get; set; } 
     public int? ErrorCode { get; set; }
     public string? ErrorMessage { get; set; }
 }

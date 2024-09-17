@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using LandsatReflectance.Backend.Models.UsgsApi;
 using LandsatReflectance.Backend.Models.UsgsApi.Endpoints;
+using LandsatReflectance.Backend.Utils;
 
 namespace LandsatReflectance.Backend.Tests;
 
@@ -18,6 +19,11 @@ public class SceneSearchSerializationTests
         {
             WriteIndented = true,
             PropertyNameCaseInsensitive = true,
+            Converters =
+            {
+                new UsgsApiResponseConverter<SceneSearchResponse>(),
+                new MetadataConverter()
+            }
         };
         
         

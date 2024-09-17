@@ -7,5 +7,5 @@ public class LoginTokenRequest
 
 public class LoginTokenResponse : IUsgsApiResponseData
 {
-    
+    public string AuthToken { get; set; } = string.Empty;
 }
