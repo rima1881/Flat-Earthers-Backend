@@ -1,4 +1,5 @@
-﻿using LandsatReflectance.Backend.Services;
+﻿using LandsatReflectance.Backend.Models;
+using LandsatReflectance.Backend.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -25,6 +26,6 @@ public class UserController : ControllerBase
         var selectedUser = UserService.Users.FirstOrDefault(user => string.Equals(user.Email, email));
         return selectedUser is not null 
             ? Ok(selectedUser) 
-            : BadRequest($"Could not find the user \"{email}\"");
+            : Ok(Array.Empty<User>());
     }
 }
