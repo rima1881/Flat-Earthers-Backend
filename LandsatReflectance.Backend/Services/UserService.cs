@@ -6,15 +6,13 @@ namespace LandsatReflectance.Backend.Services;
 
 public class UserService
 {
-    private readonly Lazy<User[]> _users = new(InitUsers);
-
-    public User[] Users => _users.Value;
+    public static List<User> Users = InitUsers();
 
     
     public UserService()
     { }
 
-    private static User[] InitUsers()
+    private static List<User> InitUsers()
     {
         var selectedRegion1 = new SelectedRegion
         {
