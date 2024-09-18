@@ -36,7 +36,7 @@ public class LoginTokenSerializationTests
     
     
     [Test]
-    public void Test2()
+    public async Task Test2()
     {
         var jsonSerializerOptions = new JsonSerializerOptions
         {
@@ -50,9 +50,22 @@ public class LoginTokenSerializationTests
         };
 
 
-        var service = new UsgsApiService();
+
+        var usgsApiKeyService = new UsgsApiKeyService();
+        var service = new UsgsApiService(usgsApiKeyService);
+
+        var loginTokenRequest = new LoginTokenRequest
+        {
+            Username = usgsApiKeyService.Username,
+            Token = usgsApiKeyService.Token,
+        };
+        var response = await service.QueryLoginToken(loginTokenRequest);
         
-        // var response = JsonSerializer.Deserialize<UsgsApiResponse<LoginTokenResponse>>(rawJson, jsonSerializerOptions);
+        if (response is null)
+            Assert.Fail();
+        
+        if (response!.Data is null)
+            Assert.Fail();
         
         Assert.Pass();
     }

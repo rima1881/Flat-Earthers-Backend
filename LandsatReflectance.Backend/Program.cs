@@ -9,6 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => c.EnableAnnotations());
 
+builder.Services.AddSingleton<UsgsApiKeyService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UsgsApiService>();
 

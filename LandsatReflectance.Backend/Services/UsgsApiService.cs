@@ -15,6 +15,7 @@ public class UsgsApiService
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         Converters =
         {
+            new UsgsApiResponseConverter<SceneSearchResponse>(),
             new UsgsApiResponseConverter<LoginTokenResponse>(),
             new MetadataConverter()
         }
@@ -26,11 +27,10 @@ public class UsgsApiService
 
     public readonly HttpClient HttpClient;
 
-    public UsgsApiService()
+    public UsgsApiService(UsgsApiKeyService usgsApiKeyService)
     {
-        // TODO: Find a way to pass the api token keys
-        Username = "ENTERUSERNAME";
-        UsgsToken = "ENTERTOKEN";
+        Username = usgsApiKeyService.Username;
+        UsgsToken = usgsApiKeyService.Token;
         
         HttpClient = new HttpClient();
         HttpClient.BaseAddress = new Uri("https://m2m.cr.usgs.gov/api/api/json/stable/");
