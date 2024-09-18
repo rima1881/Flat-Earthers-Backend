@@ -1,7 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using LandsatReflectance.Backend.Utils;
-
-namespace LandsatReflectance.Backend.Models.UsgsApi;
+﻿namespace LandsatReflectance.Backend.Models.UsgsApi;
 
 // Responses from the API have the base structure defined in 'UsgsApiResponse'.
 // The 'Data' property differs depending on the endpoint we're querying.

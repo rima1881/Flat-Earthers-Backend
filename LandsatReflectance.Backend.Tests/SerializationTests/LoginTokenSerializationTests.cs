@@ -29,7 +29,7 @@ public class LoginTokenSerializationTests
         
         
         string rawJson = File.ReadAllText("Data/Endpoints/SampleResponses/login-token-1.json");
-        var response = JsonSerializer.Deserialize<UsgsApiResponse<LoginTokenResponse>>(rawJson, jsonSerializerOptions);
+        _ = JsonSerializer.Deserialize<UsgsApiResponse<LoginTokenResponse>>(rawJson, jsonSerializerOptions);
         
         Assert.Pass();
     }
@@ -38,6 +38,7 @@ public class LoginTokenSerializationTests
     [Test]
     public async Task Test2()
     {
+        /*
         var jsonSerializerOptions = new JsonSerializerOptions
         {
             WriteIndented = true,
@@ -48,6 +49,7 @@ public class LoginTokenSerializationTests
                 new MetadataConverter()
             }
         };
+         */
 
 
 

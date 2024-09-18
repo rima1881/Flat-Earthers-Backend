@@ -42,7 +42,7 @@ public class MetadataConverter : JsonConverter<Metadata>
         throw new JsonException("Reached the end of the reader without encountering a \"JsonTokenType.StartObject\"");
     }
     
-    private void DeserializeProperty(ref Utf8JsonReader reader, JsonSerializerOptions options, string propertyName, ref Metadata usgsApiResponse)
+    private void DeserializeProperty(ref Utf8JsonReader reader, JsonSerializerOptions _, string propertyName, ref Metadata usgsApiResponse)
     {
         switch (propertyName)
         {

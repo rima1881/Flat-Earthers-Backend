@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace LandsatReflectance.Backend.Models.UsgsApi.Types;
+﻿namespace LandsatReflectance.Backend.Models.UsgsApi.Types;
 
 public class Metadata
 {

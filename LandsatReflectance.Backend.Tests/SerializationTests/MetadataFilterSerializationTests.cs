@@ -31,7 +31,7 @@ public class MetadataFilterSerializationTests
             ChildFilters = [valueFilter1, valueFilter2]
         };
 
-        var something = JsonSerializer.Serialize(andFilter, jsonSerializerOptions);
+        _ = JsonSerializer.Serialize(andFilter, jsonSerializerOptions);
         
         Assert.Pass();
     }

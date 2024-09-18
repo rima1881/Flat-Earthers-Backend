@@ -41,27 +41,20 @@ public class UsgsApiService
             Token = UsgsToken
         };
 
-        try
+        var response = QueryLoginToken(loginTokenRequest).Result;
+
+        if (response.ErrorCode is not null)
         {
-            var response = QueryLoginToken(loginTokenRequest).Result;
-
-            if (response.ErrorCode is not null)
-            {
-                throw new NotImplementedException();
-            }
-
-            var loginTokenResponse = response.Data;
-            if (loginTokenResponse is null)
-            {
-                throw new NotImplementedException();
-            }
-
-            HttpClient.DefaultRequestHeaders.Add("X-Auth-Token", loginTokenResponse.AuthToken);
+            throw new NotImplementedException();
         }
-        catch (Exception exception)
+
+        var loginTokenResponse = response.Data;
+        if (loginTokenResponse is null)
         {
-            throw;
+            throw new NotImplementedException();
         }
+
+        HttpClient.DefaultRequestHeaders.Add("X-Auth-Token", loginTokenResponse.AuthToken);
     }
     
 

@@ -2,7 +2,6 @@
 using LandsatReflectance.Backend.Models.UsgsApi.Types.Request;
 using LandsatReflectance.Backend.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace LandsatReflectance.Backend.Controllers;

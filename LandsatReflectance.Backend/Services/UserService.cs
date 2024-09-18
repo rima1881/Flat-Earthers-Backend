@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using System.Text.Json;
-using LandsatReflectance.Backend.Models;
+﻿using LandsatReflectance.Backend.Models;
 
 namespace LandsatReflectance.Backend.Services;
 
@@ -8,9 +6,6 @@ public class UserService
 {
     public static List<User> Users = InitUsers();
 
-    
-    public UserService()
-    { }
 
     private static List<User> InitUsers()
     {

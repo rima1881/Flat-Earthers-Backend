@@ -28,7 +28,7 @@ public class SceneSearchSerializationTests
         
         
         string rawJson = File.ReadAllText("Data/Endpoints/SampleResponses/scene-search-1.json");
-        var response = JsonSerializer.Deserialize<UsgsApiResponse<SceneSearchResponse>>(rawJson, jsonSerializerOptions);
+        _ = JsonSerializer.Deserialize<UsgsApiResponse<SceneSearchResponse>>(rawJson, jsonSerializerOptions);
         
         Assert.Pass();
     }

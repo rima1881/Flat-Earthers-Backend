@@ -1,7 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using LandsatReflectance.Backend.Models;
 using LandsatReflectance.Backend.Services;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 

@@ -37,7 +37,7 @@ public class UserSerializationTests
             PropertyNameCaseInsensitive = true,
         };
         
-        var rawJson = JsonSerializer.Serialize(user, jsonSerializerOptions);
+        _ = JsonSerializer.Serialize(user, jsonSerializerOptions);
         
         Assert.Pass();
     }
