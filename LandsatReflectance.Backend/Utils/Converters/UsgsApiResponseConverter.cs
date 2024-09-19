@@ -73,16 +73,54 @@ public class UsgsApiResponseConverter<T> : JsonConverter<UsgsApiResponse<T>> whe
         
         switch (typeof(T))
         {
-            case var t when t == typeof(SceneSearchResponse):
-                var sceneSearchResponse = JsonSerializer.Deserialize<SceneSearchResponse>(rawJson, options);
-                usgsApiResponse.Data = sceneSearchResponse is not null ? (T)(object)sceneSearchResponse : null;
-                break;
             case var t when t == typeof(LoginTokenResponse):
                 var loginTokenResponse = new LoginTokenResponse
                 {
                     AuthToken = JsonSerializer.Deserialize<string>(rawJson, options) ?? ""
                 };
                 usgsApiResponse.Data = (T)(object)loginTokenResponse;
+                break;
+            
+            case var t when t == typeof(SceneListAddResponse):
+                var listLen = JsonSerializer.Deserialize<int?>(rawJson);
+                if (listLen is not null)
+                {
+                    usgsApiResponse.Data = (T)(object)new SceneListAddResponse
+                    {
+                        ListLength = listLen.Value
+                    };
+                }
+                break;
+            
+            case var t when t == typeof(SceneListGetResponse):
+                var entityIds = JsonSerializer
+                    .Deserialize<SceneListGetHelperClass[]>(rawJson, options)
+                    ?.Select(data => data.EntityId)
+                    .ToArray();
+
+                if (entityIds is not null)
+                {
+                    usgsApiResponse.Data = (T)(object)new SceneListGetResponse
+                    {
+                        EntityIds = entityIds
+                    };
+                }
+                break;
+            
+            case var t when t == typeof(SceneMetadataListResponse):
+                var returnedSceneData = JsonSerializer.Deserialize<SceneData[]>(rawJson, options);
+                if (returnedSceneData is not null)
+                {
+                    usgsApiResponse.Data = (T)(object)new SceneMetadataListResponse
+                    {
+                        ReturnedSceneData = returnedSceneData
+                    };
+                }
+                break;
+            
+            case var t when t == typeof(SceneSearchResponse):
+                var sceneSearchResponse = JsonSerializer.Deserialize<SceneSearchResponse>(rawJson, options);
+                usgsApiResponse.Data = sceneSearchResponse is not null ? (T)(object)sceneSearchResponse : null;
                 break;
         }
     }
@@ -95,3 +133,17 @@ public class UsgsApiResponseConverter<T> : JsonConverter<UsgsApiResponse<T>> whe
         throw new NotImplementedException();
     }
 }
+
+
+
+#region Helper Model Classes
+
+class SceneListGetHelperClass
+{
+    [JsonPropertyName("entityId")]
+    public string EntityId { get; set; } = string.Empty;
+    [JsonPropertyName("datasetName")]
+    public string DatasetName { get; set; } = string.Empty;
+}
+
+#endregion

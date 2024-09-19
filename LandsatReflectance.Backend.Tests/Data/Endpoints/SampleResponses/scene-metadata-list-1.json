@@ -1,0 +1,1274 @@
+﻿{
+  "requestId": 1799164993,
+  "version": "stable",
+  "data": [
+    {
+      "browse": [
+        {
+          "id": "5fb4ba12d7ec307f",
+          "browseRotationEnabled": false,
+          "browseName": "Level-1 Reflective Browse",
+          "browsePath": "https://landsatlook.usgs.gov/gen-browse?size=rrb&type=refl&product_id=LC09_L1TP_014028_20240826_20240826_02_T1",
+          "overlayPath": "https://landsatlook.usgs.gov/dynamic-tiler/scenes/LC09_L1TP_014028_20240826_20240826_02_T1/tiles/{z}/{x}/{y}.png?layer=natural_color",
+          "overlayType": "ls_chs",
+          "thumbnailPath": "https://landsatlook.usgs.gov/gen-browse?size=thumb&type=refl&product_id=LC09_L1TP_014028_20240826_20240826_02_T1"
+        }
+      ],
+      "cloudCover": 15,
+      "entityId": "LC90140282024239LGN00",
+      "displayId": "LC09_L2SP_014028_20240826_20240827_02_T1",
+      "orderingId": "LC90140282024239LGN00",
+      "metadata": [
+        {
+          "id": "5e83d1507bc900d5",
+          "fieldName": "Landsat Product Identifier L2",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#landsat_product_id",
+          "value": "LC09_L2SP_014028_20240826_20240827_02_T1"
+        },
+        {
+          "id": "5e83d15012b8905f",
+          "fieldName": "Landsat Product Identifier L1",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#landsat_product_id",
+          "value": "LC09_L1TP_014028_20240826_20240826_02_T1"
+        },
+        {
+          "id": "5e83d15026e218b4",
+          "fieldName": "Landsat Scene Identifier",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#landsat_scene_id",
+          "value": "LC90140282024239LGN00"
+        },
+        {
+          "id": "5e83d150a04d71a8",
+          "fieldName": "Date Acquired",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#acquisition_date",
+          "value": "2024/08/26"
+        },
+        {
+          "id": "5e83d150d14f2972",
+          "fieldName": "Collection Category",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#collection_category",
+          "value": "T1"
+        },
+        {
+          "id": "5e83d150ad06ba56",
+          "fieldName": "Collection Number",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#collection_number",
+          "value": 2
+        },
+        {
+          "id": "5e83d15051254e26",
+          "fieldName": "WRS Path",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#wrs_path",
+          "value": " 014"
+        },
+        {
+          "id": "5e83d15038163a68",
+          "fieldName": "WRS Row",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#wrs_row",
+          "value": " 028"
+        },
+        {
+          "id": "5e83d150ffeec8d0",
+          "fieldName": "Target WRS Path",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#target_wrs_path",
+          "value": " 014"
+        },
+        {
+          "id": "5e83d1501e4df49f",
+          "fieldName": "Target WRS Row",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#target_wrs_row",
+          "value": " 028"
+        },
+        {
+          "id": "5e83d15018b402df",
+          "fieldName": "Nadir/Off Nadir",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#nadir_offnadir",
+          "value": "NADIR"
+        },
+        {
+          "id": "5e83d15099febb12",
+          "fieldName": "Roll Angle",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#roll_angle",
+          "value": "   0.000"
+        },
+        {
+          "id": "5e83d1505a0b9dca",
+          "fieldName": "Date Product Generated L2",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#date_l2_generated",
+          "value": "2024/08/27"
+        },
+        {
+          "id": "5e83d150bd846fbd",
+          "fieldName": "Date Product Generated L1",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#date_l1_generated",
+          "value": "2024/08/26"
+        },
+        {
+          "id": "5e83d150f3ba8369",
+          "fieldName": "Start Time",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#start_time",
+          "value": "2024-08-26 15:37:47"
+        },
+        {
+          "id": "5e83d1506939e64b",
+          "fieldName": "Stop Time",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#stop_time",
+          "value": "2024-08-26 15:38:19"
+        },
+        {
+          "id": "5e83d150852a8757",
+          "fieldName": "Station Identifier",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#distribution_site",
+          "value": "LGN"
+        },
+        {
+          "id": "5e83d150f456ceeb",
+          "fieldName": "Day/Night Indicator",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#day_or_night",
+          "value": "DAY"
+        },
+        {
+          "id": "5e83d150f4c88f82",
+          "fieldName": "Land Cloud Cover",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#cloud_cover_land",
+          "value": "  14.37"
+        },
+        {
+          "id": "5e83d150542b5637",
+          "fieldName": "Scene Cloud Cover L1",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#cloud_cover",
+          "value": "  14.74"
+        },
+        {
+          "id": "5e83d15049487c8d",
+          "fieldName": "Ground Control Points Model",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#ground_control_points_model",
+          "value": 585
+        },
+        {
+          "id": "5e83d150f80b5332",
+          "fieldName": "Ground Control Points Version",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#ground_control_points_version",
+          "value": 5
+        },
+        {
+          "id": "5e83d15013028801",
+          "fieldName": "Geometric RMSE Model",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#geometric_rmse_model",
+          "value": "    6.541"
+        },
+        {
+          "id": "5e83d150de0b9e3f",
+          "fieldName": "Geometric RMSE Model X",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#geometric_rmse_model_x",
+          "value": "    4.487"
+        },
+        {
+          "id": "5e83d15046f51c13",
+          "fieldName": "Geometric RMSE Model Y",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#geometric_rmse_model_y",
+          "value": "    4.758"
+        },
+        {
+          "id": "5e83d1506df2085b",
+          "fieldName": "Processing Software Version",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#processing_software_version",
+          "value": "LPGS_16.4.0"
+        },
+        {
+          "id": "5e83d1504c08a527",
+          "fieldName": "Sun Elevation L0RA",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#sun_elevation_lora",
+          "value": "50.61654194"
+        },
+        {
+          "id": "5e83d15043371d7a",
+          "fieldName": "Sun Azimuth L0RA",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#sun_azimuth_lora",
+          "value": "149.92142796"
+        },
+        {
+          "id": "5e83d1508920c3cc",
+          "fieldName": "TIRS SSM Model",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#tirs_ssm_model",
+          "value": "N/A"
+        },
+        {
+          "id": "5e83d1507fcff203",
+          "fieldName": "Data Type L2",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#data_type_21",
+          "value": "OLI_TIRS_L2SP"
+        },
+        {
+          "id": "5e83d15026284c81",
+          "fieldName": "Sensor Identifier",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#sensor_id",
+          "value": "OLI_TIRS"
+        },
+        {
+          "id": "5e83d150407d262",
+          "fieldName": "Satellite",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#satellite",
+          "value": 9
+        },
+        {
+          "id": "5e83d150b7ec490f",
+          "fieldName": "Product Map Projection L1",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#map_projection_l1",
+          "value": "UTM"
+        },
+        {
+          "id": "5e83d15057c7634",
+          "fieldName": "UTM Zone",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#utm_zone",
+          "value": 18
+        },
+        {
+          "id": "5e83d1507494065b",
+          "fieldName": "Datum",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#datum",
+          "value": "WGS84"
+        },
+        {
+          "id": "5e83d15076f7bea3",
+          "fieldName": "Ellipsoid",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#ellipsoid",
+          "value": "WGS84"
+        },
+        {
+          "id": "5e83d150ca952f3f",
+          "fieldName": "Scene Center Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "46°01'47.46\"N"
+        },
+        {
+          "id": "5e83d1505841f4fe",
+          "fieldName": "Scene Center Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "72°57'10.22\"W"
+        },
+        {
+          "id": "5e83d150de243677",
+          "fieldName": "Corner Upper Left Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "47°05'39.59\"N"
+        },
+        {
+          "id": "5e83d15065863aa0",
+          "fieldName": "Corner Upper Left Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "74°26'14.50\"W"
+        },
+        {
+          "id": "5e83d150d64cb217",
+          "fieldName": "Corner Upper Right Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "47°02'20.40\"N"
+        },
+        {
+          "id": "5e83d15020c8dbc3",
+          "fieldName": "Corner Upper Right Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "71°23'49.60\"W"
+        },
+        {
+          "id": "5e83d1508aa01290",
+          "fieldName": "Corner Lower Left Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "44°59'18.10\"N"
+        },
+        {
+          "id": "5e83d150d10c4feb",
+          "fieldName": "Corner Lower Left Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "74°27'30.02\"W"
+        },
+        {
+          "id": "5e83d150a375b702",
+          "fieldName": "Corner Lower Right Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "44°56'12.95\"N"
+        },
+        {
+          "id": "5e83d150f86debf3",
+          "fieldName": "Corner Lower Right Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "71°31'52.07\"W"
+        },
+        {
+          "id": "5e83d1502ae838fe",
+          "fieldName": "Scene Center Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 46.02985"
+        },
+        {
+          "id": "5e83d150fe6955f6",
+          "fieldName": "Scene Center Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -72.95284"
+        },
+        {
+          "id": "5e83d1502c8e19f8",
+          "fieldName": "Corner Upper Left Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 47.09433"
+        },
+        {
+          "id": "5e83d15032f89801",
+          "fieldName": "Corner Upper Left Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -74.43736"
+        },
+        {
+          "id": "5e83d150109a3882",
+          "fieldName": "Corner Upper Right Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 47.03900"
+        },
+        {
+          "id": "5e83d150b66c37e6",
+          "fieldName": "Corner Upper Right Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -71.39711"
+        },
+        {
+          "id": "5e83d1509a3dc0e0",
+          "fieldName": "Corner Lower Left Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 44.98836"
+        },
+        {
+          "id": "5e83d150b01bff83",
+          "fieldName": "Corner Lower Left Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -74.45834"
+        },
+        {
+          "id": "5e83d150b70ab7fd",
+          "fieldName": "Corner Lower Right Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 44.93693"
+        },
+        {
+          "id": "5e83d15038ccf2f",
+          "fieldName": "Corner Lower Right Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -71.53113"
+        }
+      ],
+      "hasCustomizedMetadata": false,
+      "options": {
+        "bulk": true,
+        "download": true,
+        "order": false,
+        "secondary": false
+      },
+      "selected": null,
+      "spatialBounds": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -74.45056,
+              44.95371
+            ],
+            [
+              -74.45056,
+              47.08969
+            ],
+            [
+              -71.42323,
+              47.08969
+            ],
+            [
+              -71.42323,
+              44.95371
+            ],
+            [
+              -74.45056,
+              44.95371
+            ]
+          ]
+        ]
+      },
+      "spatialCoverage": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -74.45056,
+              45.38079
+            ],
+            [
+              -72.0933,
+              44.95371
+            ],
+            [
+              -71.42323,
+              46.65823
+            ],
+            [
+              -73.85304,
+              47.08969
+            ],
+            [
+              -74.45056,
+              45.38079
+            ]
+          ]
+        ]
+      },
+      "temporalCoverage": {
+        "endDate": "2024-08-26 00:00:00",
+        "startDate": "2024-08-26 00:00:00"
+      },
+      "publishDate": "2024-08-27T05:48:40"
+    },
+    {
+      "browse": [
+        {
+          "id": "5fb4ba12d7ec307f",
+          "browseRotationEnabled": false,
+          "browseName": "Level-1 Reflective Browse",
+          "browsePath": "https://landsatlook.usgs.gov/gen-browse?size=rrb&type=refl&product_id=LC09_L1TP_014028_20240911_20240911_02_T1",
+          "overlayPath": "https://landsatlook.usgs.gov/dynamic-tiler/scenes/LC09_L1TP_014028_20240911_20240911_02_T1/tiles/{z}/{x}/{y}.png?layer=natural_color",
+          "overlayType": "ls_chs",
+          "thumbnailPath": "https://landsatlook.usgs.gov/gen-browse?size=thumb&type=refl&product_id=LC09_L1TP_014028_20240911_20240911_02_T1"
+        }
+      ],
+      "cloudCover": 1,
+      "entityId": "LC90140282024255LGN00",
+      "displayId": "LC09_L2SP_014028_20240911_20240912_02_T1",
+      "orderingId": "LC90140282024255LGN00",
+      "metadata": [
+        {
+          "id": "5e83d1507bc900d5",
+          "fieldName": "Landsat Product Identifier L2",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#landsat_product_id",
+          "value": "LC09_L2SP_014028_20240911_20240912_02_T1"
+        },
+        {
+          "id": "5e83d15012b8905f",
+          "fieldName": "Landsat Product Identifier L1",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#landsat_product_id",
+          "value": "LC09_L1TP_014028_20240911_20240911_02_T1"
+        },
+        {
+          "id": "5e83d15026e218b4",
+          "fieldName": "Landsat Scene Identifier",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#landsat_scene_id",
+          "value": "LC90140282024255LGN00"
+        },
+        {
+          "id": "5e83d150a04d71a8",
+          "fieldName": "Date Acquired",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#acquisition_date",
+          "value": "2024/09/11"
+        },
+        {
+          "id": "5e83d150d14f2972",
+          "fieldName": "Collection Category",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#collection_category",
+          "value": "T1"
+        },
+        {
+          "id": "5e83d150ad06ba56",
+          "fieldName": "Collection Number",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#collection_number",
+          "value": 2
+        },
+        {
+          "id": "5e83d15051254e26",
+          "fieldName": "WRS Path",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#wrs_path",
+          "value": " 014"
+        },
+        {
+          "id": "5e83d15038163a68",
+          "fieldName": "WRS Row",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#wrs_row",
+          "value": " 028"
+        },
+        {
+          "id": "5e83d150ffeec8d0",
+          "fieldName": "Target WRS Path",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#target_wrs_path",
+          "value": " 014"
+        },
+        {
+          "id": "5e83d1501e4df49f",
+          "fieldName": "Target WRS Row",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#target_wrs_row",
+          "value": " 028"
+        },
+        {
+          "id": "5e83d15018b402df",
+          "fieldName": "Nadir/Off Nadir",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#nadir_offnadir",
+          "value": "NADIR"
+        },
+        {
+          "id": "5e83d15099febb12",
+          "fieldName": "Roll Angle",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#roll_angle",
+          "value": "   0.000"
+        },
+        {
+          "id": "5e83d1505a0b9dca",
+          "fieldName": "Date Product Generated L2",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#date_l2_generated",
+          "value": "2024/09/12"
+        },
+        {
+          "id": "5e83d150bd846fbd",
+          "fieldName": "Date Product Generated L1",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#date_l1_generated",
+          "value": "2024/09/11"
+        },
+        {
+          "id": "5e83d150f3ba8369",
+          "fieldName": "Start Time",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#start_time",
+          "value": "2024-09-11 15:37:49"
+        },
+        {
+          "id": "5e83d1506939e64b",
+          "fieldName": "Stop Time",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#stop_time",
+          "value": "2024-09-11 15:38:21"
+        },
+        {
+          "id": "5e83d150852a8757",
+          "fieldName": "Station Identifier",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#distribution_site",
+          "value": "LGN"
+        },
+        {
+          "id": "5e83d150f456ceeb",
+          "fieldName": "Day/Night Indicator",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#day_or_night",
+          "value": "DAY"
+        },
+        {
+          "id": "5e83d150f4c88f82",
+          "fieldName": "Land Cloud Cover",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#cloud_cover_land",
+          "value": "   0.54"
+        },
+        {
+          "id": "5e83d150542b5637",
+          "fieldName": "Scene Cloud Cover L1",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#cloud_cover",
+          "value": "   0.52"
+        },
+        {
+          "id": "5e83d15049487c8d",
+          "fieldName": "Ground Control Points Model",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#ground_control_points_model",
+          "value": 851
+        },
+        {
+          "id": "5e83d150f80b5332",
+          "fieldName": "Ground Control Points Version",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#ground_control_points_version",
+          "value": 5
+        },
+        {
+          "id": "5e83d15013028801",
+          "fieldName": "Geometric RMSE Model",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#geometric_rmse_model",
+          "value": "    5.459"
+        },
+        {
+          "id": "5e83d150de0b9e3f",
+          "fieldName": "Geometric RMSE Model X",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#geometric_rmse_model_x",
+          "value": "    3.885"
+        },
+        {
+          "id": "5e83d15046f51c13",
+          "fieldName": "Geometric RMSE Model Y",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#geometric_rmse_model_y",
+          "value": "    3.835"
+        },
+        {
+          "id": "5e83d1506df2085b",
+          "fieldName": "Processing Software Version",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#processing_software_version",
+          "value": "LPGS_16.4.0"
+        },
+        {
+          "id": "5e83d1504c08a527",
+          "fieldName": "Sun Elevation L0RA",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#sun_elevation_lora",
+          "value": "45.48141847"
+        },
+        {
+          "id": "5e83d15043371d7a",
+          "fieldName": "Sun Azimuth L0RA",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#sun_azimuth_lora",
+          "value": "154.66027727"
+        },
+        {
+          "id": "5e83d1508920c3cc",
+          "fieldName": "TIRS SSM Model",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#tirs_ssm_model",
+          "value": "N/A"
+        },
+        {
+          "id": "5e83d1507fcff203",
+          "fieldName": "Data Type L2",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#data_type_21",
+          "value": "OLI_TIRS_L2SP"
+        },
+        {
+          "id": "5e83d15026284c81",
+          "fieldName": "Sensor Identifier",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#sensor_id",
+          "value": "OLI_TIRS"
+        },
+        {
+          "id": "5e83d150407d262",
+          "fieldName": "Satellite",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#satellite",
+          "value": 9
+        },
+        {
+          "id": "5e83d150b7ec490f",
+          "fieldName": "Product Map Projection L1",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#map_projection_l1",
+          "value": "UTM"
+        },
+        {
+          "id": "5e83d15057c7634",
+          "fieldName": "UTM Zone",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#utm_zone",
+          "value": 18
+        },
+        {
+          "id": "5e83d1507494065b",
+          "fieldName": "Datum",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#datum",
+          "value": "WGS84"
+        },
+        {
+          "id": "5e83d15076f7bea3",
+          "fieldName": "Ellipsoid",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#ellipsoid",
+          "value": "WGS84"
+        },
+        {
+          "id": "5e83d150ca952f3f",
+          "fieldName": "Scene Center Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "46°01'46.85\"N"
+        },
+        {
+          "id": "5e83d1505841f4fe",
+          "fieldName": "Scene Center Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "72°56'06\"W"
+        },
+        {
+          "id": "5e83d150de243677",
+          "fieldName": "Corner Upper Left Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "47°05'39.23\"N"
+        },
+        {
+          "id": "5e83d15065863aa0",
+          "fieldName": "Corner Upper Left Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "74°25'03.32\"W"
+        },
+        {
+          "id": "5e83d150d64cb217",
+          "fieldName": "Corner Upper Right Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "47°02'18.17\"N"
+        },
+        {
+          "id": "5e83d15020c8dbc3",
+          "fieldName": "Corner Upper Right Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "71°22'38.64\"W"
+        },
+        {
+          "id": "5e83d1508aa01290",
+          "fieldName": "Corner Lower Left Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "44°59'17.77\"N"
+        },
+        {
+          "id": "5e83d150d10c4feb",
+          "fieldName": "Corner Lower Left Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "74°26'21.52\"W"
+        },
+        {
+          "id": "5e83d150a375b702",
+          "fieldName": "Corner Lower Right Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "44°56'10.86\"N"
+        },
+        {
+          "id": "5e83d150f86debf3",
+          "fieldName": "Corner Lower Right Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "71°30'43.78\"W"
+        },
+        {
+          "id": "5e83d1502ae838fe",
+          "fieldName": "Scene Center Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 46.02968"
+        },
+        {
+          "id": "5e83d150fe6955f6",
+          "fieldName": "Scene Center Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -72.93500"
+        },
+        {
+          "id": "5e83d1502c8e19f8",
+          "fieldName": "Corner Upper Left Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 47.09423"
+        },
+        {
+          "id": "5e83d15032f89801",
+          "fieldName": "Corner Upper Left Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -74.41759"
+        },
+        {
+          "id": "5e83d150109a3882",
+          "fieldName": "Corner Upper Right Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 47.03838"
+        },
+        {
+          "id": "5e83d150b66c37e6",
+          "fieldName": "Corner Upper Right Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -71.37740"
+        },
+        {
+          "id": "5e83d1509a3dc0e0",
+          "fieldName": "Corner Lower Left Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 44.98827"
+        },
+        {
+          "id": "5e83d150b01bff83",
+          "fieldName": "Corner Lower Left Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -74.43931"
+        },
+        {
+          "id": "5e83d150b70ab7fd",
+          "fieldName": "Corner Lower Right Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 44.93635"
+        },
+        {
+          "id": "5e83d15038ccf2f",
+          "fieldName": "Corner Lower Right Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -71.51216"
+        }
+      ],
+      "hasCustomizedMetadata": false,
+      "options": {
+        "bulk": true,
+        "download": true,
+        "order": false,
+        "secondary": false
+      },
+      "selected": null,
+      "spatialBounds": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -74.43266,
+              44.95355
+            ],
+            [
+              -74.43266,
+              47.08947
+            ],
+            [
+              -71.40545,
+              47.08947
+            ],
+            [
+              -71.40545,
+              44.95355
+            ],
+            [
+              -74.43266,
+              44.95355
+            ]
+          ]
+        ]
+      },
+      "spatialCoverage": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -74.43266,
+              45.38057
+            ],
+            [
+              -72.07528,
+              44.95355
+            ],
+            [
+              -71.40545,
+              46.65809
+            ],
+            [
+              -73.83538,
+              47.08947
+            ],
+            [
+              -74.43266,
+              45.38057
+            ]
+          ]
+        ]
+      },
+      "temporalCoverage": {
+        "endDate": "2024-09-11 00:00:00",
+        "startDate": "2024-09-11 00:00:00"
+      },
+      "publishDate": "2024-09-12T06:04:21"
+    },
+    {
+      "browse": [
+        {
+          "id": "5fb4ba12d7ec307f",
+          "browseRotationEnabled": false,
+          "browseName": "Level-1 Reflective Browse",
+          "browsePath": "https://landsatlook.usgs.gov/gen-browse?size=rrb&type=refl&product_id=LC08_L1TP_014028_20240903_20240906_02_T1",
+          "overlayPath": "https://landsatlook.usgs.gov/dynamic-tiler/scenes/LC08_L1TP_014028_20240903_20240906_02_T1/tiles/{z}/{x}/{y}.png?layer=natural_color",
+          "overlayType": "ls_chs",
+          "thumbnailPath": "https://landsatlook.usgs.gov/gen-browse?size=thumb&type=refl&product_id=LC08_L1TP_014028_20240903_20240906_02_T1"
+        }
+      ],
+      "cloudCover": 3,
+      "entityId": "LC80140282024247LGN00",
+      "displayId": "LC08_L2SP_014028_20240903_20240906_02_T1",
+      "orderingId": "LC80140282024247LGN00",
+      "metadata": [
+        {
+          "id": "5e83d1507bc900d5",
+          "fieldName": "Landsat Product Identifier L2",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#landsat_product_id",
+          "value": "LC08_L2SP_014028_20240903_20240906_02_T1"
+        },
+        {
+          "id": "5e83d15012b8905f",
+          "fieldName": "Landsat Product Identifier L1",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#landsat_product_id",
+          "value": "LC08_L1TP_014028_20240903_20240906_02_T1"
+        },
+        {
+          "id": "5e83d15026e218b4",
+          "fieldName": "Landsat Scene Identifier",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#landsat_scene_id",
+          "value": "LC80140282024247LGN00"
+        },
+        {
+          "id": "5e83d150a04d71a8",
+          "fieldName": "Date Acquired",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#acquisition_date",
+          "value": "2024/09/03"
+        },
+        {
+          "id": "5e83d150d14f2972",
+          "fieldName": "Collection Category",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#collection_category",
+          "value": "T1"
+        },
+        {
+          "id": "5e83d150ad06ba56",
+          "fieldName": "Collection Number",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#collection_number",
+          "value": 2
+        },
+        {
+          "id": "5e83d15051254e26",
+          "fieldName": "WRS Path",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#wrs_path",
+          "value": " 014"
+        },
+        {
+          "id": "5e83d15038163a68",
+          "fieldName": "WRS Row",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#wrs_row",
+          "value": " 028"
+        },
+        {
+          "id": "5e83d150ffeec8d0",
+          "fieldName": "Target WRS Path",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#target_wrs_path",
+          "value": " 014"
+        },
+        {
+          "id": "5e83d1501e4df49f",
+          "fieldName": "Target WRS Row",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#target_wrs_row",
+          "value": " 028"
+        },
+        {
+          "id": "5e83d15018b402df",
+          "fieldName": "Nadir/Off Nadir",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#nadir_offnadir",
+          "value": "NADIR"
+        },
+        {
+          "id": "5e83d15099febb12",
+          "fieldName": "Roll Angle",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#roll_angle",
+          "value": "  -0.001"
+        },
+        {
+          "id": "5e83d1505a0b9dca",
+          "fieldName": "Date Product Generated L2",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#date_l2_generated",
+          "value": "2024/09/06"
+        },
+        {
+          "id": "5e83d150bd846fbd",
+          "fieldName": "Date Product Generated L1",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#date_l1_generated",
+          "value": "2024/09/06"
+        },
+        {
+          "id": "5e83d150f3ba8369",
+          "fieldName": "Start Time",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#start_time",
+          "value": "2024-09-03 15:37:53"
+        },
+        {
+          "id": "5e83d1506939e64b",
+          "fieldName": "Stop Time",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#stop_time",
+          "value": "2024-09-03 15:38:24"
+        },
+        {
+          "id": "5e83d150852a8757",
+          "fieldName": "Station Identifier",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#distribution_site",
+          "value": "LGN"
+        },
+        {
+          "id": "5e83d150f456ceeb",
+          "fieldName": "Day/Night Indicator",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#day_or_night",
+          "value": "DAY"
+        },
+        {
+          "id": "5e83d150f4c88f82",
+          "fieldName": "Land Cloud Cover",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#cloud_cover_land",
+          "value": "   3.05"
+        },
+        {
+          "id": "5e83d150542b5637",
+          "fieldName": "Scene Cloud Cover L1",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#cloud_cover",
+          "value": "   2.97"
+        },
+        {
+          "id": "5e83d15049487c8d",
+          "fieldName": "Ground Control Points Model",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#ground_control_points_model",
+          "value": 675
+        },
+        {
+          "id": "5e83d150f80b5332",
+          "fieldName": "Ground Control Points Version",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#ground_control_points_version",
+          "value": 5
+        },
+        {
+          "id": "5e83d15013028801",
+          "fieldName": "Geometric RMSE Model",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#geometric_rmse_model",
+          "value": "    6.562"
+        },
+        {
+          "id": "5e83d150de0b9e3f",
+          "fieldName": "Geometric RMSE Model X",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#geometric_rmse_model_x",
+          "value": "    4.413"
+        },
+        {
+          "id": "5e83d15046f51c13",
+          "fieldName": "Geometric RMSE Model Y",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#geometric_rmse_model_y",
+          "value": "    4.856"
+        },
+        {
+          "id": "5e83d1506df2085b",
+          "fieldName": "Processing Software Version",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#processing_software_version",
+          "value": "LPGS_16.4.0"
+        },
+        {
+          "id": "5e83d1504c08a527",
+          "fieldName": "Sun Elevation L0RA",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#sun_elevation_lora",
+          "value": "48.12877251"
+        },
+        {
+          "id": "5e83d15043371d7a",
+          "fieldName": "Sun Azimuth L0RA",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#sun_azimuth_lora",
+          "value": "152.36568108"
+        },
+        {
+          "id": "5e83d1508920c3cc",
+          "fieldName": "TIRS SSM Model",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#tirs_ssm_model",
+          "value": "FINAL"
+        },
+        {
+          "id": "5e83d1507fcff203",
+          "fieldName": "Data Type L2",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#data_type_21",
+          "value": "OLI_TIRS_L2SP"
+        },
+        {
+          "id": "5e83d15026284c81",
+          "fieldName": "Sensor Identifier",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#sensor_id",
+          "value": "OLI_TIRS"
+        },
+        {
+          "id": "5e83d150407d262",
+          "fieldName": "Satellite",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#satellite",
+          "value": 8
+        },
+        {
+          "id": "5e83d150b7ec490f",
+          "fieldName": "Product Map Projection L1",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#map_projection_l1",
+          "value": "UTM"
+        },
+        {
+          "id": "5e83d15057c7634",
+          "fieldName": "UTM Zone",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#utm_zone",
+          "value": 18
+        },
+        {
+          "id": "5e83d1507494065b",
+          "fieldName": "Datum",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#datum",
+          "value": "WGS84"
+        },
+        {
+          "id": "5e83d15076f7bea3",
+          "fieldName": "Ellipsoid",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#ellipsoid",
+          "value": "WGS84"
+        },
+        {
+          "id": "5e83d150ca952f3f",
+          "fieldName": "Scene Center Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "46°01'47.06\"N"
+        },
+        {
+          "id": "5e83d1505841f4fe",
+          "fieldName": "Scene Center Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "72°56'07.12\"W"
+        },
+        {
+          "id": "5e83d150de243677",
+          "fieldName": "Corner Upper Left Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "47°05'48.95\"N"
+        },
+        {
+          "id": "5e83d15065863aa0",
+          "fieldName": "Corner Upper Left Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "74°25'03.22\"W"
+        },
+        {
+          "id": "5e83d150d64cb217",
+          "fieldName": "Corner Upper Right Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "47°02'27.85\"N"
+        },
+        {
+          "id": "5e83d15020c8dbc3",
+          "fieldName": "Corner Upper Right Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "71°22'37.99\"W"
+        },
+        {
+          "id": "5e83d1508aa01290",
+          "fieldName": "Corner Lower Left Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "44°59'08.05\"N"
+        },
+        {
+          "id": "5e83d150d10c4feb",
+          "fieldName": "Corner Lower Left Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "74°26'21.62\"W"
+        },
+        {
+          "id": "5e83d150a375b702",
+          "fieldName": "Corner Lower Right Lat DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "44°56'01.18\"N"
+        },
+        {
+          "id": "5e83d150f86debf3",
+          "fieldName": "Corner Lower Right Long DMS",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_degrees",
+          "value": "71°30'44.35\"W"
+        },
+        {
+          "id": "5e83d1502ae838fe",
+          "fieldName": "Scene Center Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 46.02974"
+        },
+        {
+          "id": "5e83d150fe6955f6",
+          "fieldName": "Scene Center Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -72.93531"
+        },
+        {
+          "id": "5e83d1502c8e19f8",
+          "fieldName": "Corner Upper Left Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 47.09693"
+        },
+        {
+          "id": "5e83d15032f89801",
+          "fieldName": "Corner Upper Left Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -74.41756"
+        },
+        {
+          "id": "5e83d150109a3882",
+          "fieldName": "Corner Upper Right Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 47.04107"
+        },
+        {
+          "id": "5e83d150b66c37e6",
+          "fieldName": "Corner Upper Right Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -71.37722"
+        },
+        {
+          "id": "5e83d1509a3dc0e0",
+          "fieldName": "Corner Lower Left Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 44.98557"
+        },
+        {
+          "id": "5e83d150b01bff83",
+          "fieldName": "Corner Lower Left Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -74.43934"
+        },
+        {
+          "id": "5e83d150b70ab7fd",
+          "fieldName": "Corner Lower Right Latitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " 44.93366"
+        },
+        {
+          "id": "5e83d15038ccf2f",
+          "fieldName": "Corner Lower Right Longitude",
+          "dictionaryLink": "https://www.usgs.gov/centers/eros/science/landsat-collection-2-data-dictionary#coordinates_decimal",
+          "value": " -71.51232"
+        }
+      ],
+      "hasCustomizedMetadata": false,
+      "options": {
+        "bulk": true,
+        "download": true,
+        "order": false,
+        "secondary": false
+      },
+      "selected": null,
+      "spatialBounds": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -74.43271,
+              44.95229
+            ],
+            [
+              -74.43271,
+              47.09087
+            ],
+            [
+              -71.40553,
+              47.09087
+            ],
+            [
+              -71.40553,
+              44.95229
+            ],
+            [
+              -74.43271,
+              44.95229
+            ]
+          ]
+        ]
+      },
+      "spatialCoverage": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -74.43271,
+              45.3819
+            ],
+            [
+              -72.07576,
+              44.95229
+            ],
+            [
+              -71.40553,
+              46.65668
+            ],
+            [
+              -73.83492,
+              47.09087
+            ],
+            [
+              -74.43271,
+              45.3819
+            ]
+          ]
+        ]
+      },
+      "temporalCoverage": {
+        "endDate": "2024-09-03 00:00:00",
+        "startDate": "2024-09-03 00:00:00"
+      },
+      "publishDate": "2024-09-06T06:10:58"
+    }
+  ],
+  "errorCode": null,
+  "errorMessage": null
+}

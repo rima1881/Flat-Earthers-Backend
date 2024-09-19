@@ -15,8 +15,11 @@ public class UsgsApiService
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         Converters =
         {
-            new UsgsApiResponseConverter<SceneSearchResponse>(),
             new UsgsApiResponseConverter<LoginTokenResponse>(),
+            new UsgsApiResponseConverter<SceneListAddResponse>(),
+            new UsgsApiResponseConverter<SceneListGetResponse>(),
+            new UsgsApiResponseConverter<SceneMetadataListResponse>(),
+            new UsgsApiResponseConverter<SceneSearchResponse>(),
             new MetadataConverter(),
             new CustomDateTimeConverter()
         }
@@ -61,17 +64,36 @@ public class UsgsApiService
 
 #region Query Endpoint
 
-    public async Task<UsgsApiResponse<SceneSearchResponse>> QuerySceneSearch(SceneSearchRequest sceneSearchRequest)
-    {
-        string asJson = JsonSerializer.Serialize(sceneSearchRequest, JsonSerializerOptions);
-        return await QueryAsync<SceneSearchResponse>(HttpClient, "scene-search", asJson);
-    }
-
     public async Task<UsgsApiResponse<LoginTokenResponse>> QueryLoginToken(LoginTokenRequest loginTokenRequest)
     {
         string asJson = JsonSerializer.Serialize(loginTokenRequest, JsonSerializerOptions);
         return await QueryAsync<LoginTokenResponse>(HttpClient, "login-token", asJson);
     }
+    
+    public async Task<UsgsApiResponse<SceneListAddResponse>> QuerySceneListAdd(SceneListAddResponse sceneListAddResponse)
+    {
+        string asJson = JsonSerializer.Serialize(sceneListAddResponse, JsonSerializerOptions);
+        return await QueryAsync<SceneListAddResponse>(HttpClient, "scene-list-add", asJson);
+    }
+    
+    public async Task<UsgsApiResponse<SceneListGetResponse>> QuerySceneListGet(SceneListGetRequest sceneListGetRequest)
+    {
+        string asJson = JsonSerializer.Serialize(sceneListGetRequest, JsonSerializerOptions);
+        return await QueryAsync<SceneListGetResponse>(HttpClient, "scene-list-get", asJson);
+    }
+    
+    public async Task<UsgsApiResponse<SceneMetadataListResponse>> QuerySceneMetadataList(SceneMetadataListRequest sceneMetadataListRequest)
+    {
+        string asJson = JsonSerializer.Serialize(sceneMetadataListRequest, JsonSerializerOptions);
+        return await QueryAsync<SceneMetadataListResponse>(HttpClient, "scene-metadata_list", asJson);
+    }
+
+    public async Task<UsgsApiResponse<SceneSearchResponse>> QuerySceneSearch(SceneSearchRequest sceneSearchRequest)
+    {
+        string asJson = JsonSerializer.Serialize(sceneSearchRequest, JsonSerializerOptions);
+        return await QueryAsync<SceneSearchResponse>(HttpClient, "scene-search", asJson);
+    }
+    
     
     private static async Task<UsgsApiResponse<TResponseType>> QueryAsync<TResponseType>(
         HttpClient httpClient, 

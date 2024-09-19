@@ -75,11 +75,12 @@ public class UsgsController : ControllerBase
             Converters = { new SceneDataSimplifiedConverter() }
         };
 
-        var browsePaths = 
+        var browsePaths =
             data.ReturnedSceneData
                 .Where(sceneData => sceneData.BrowseInfos.Length > 0)
-                .Select(sceneData => JsonSerializer.Serialize(sceneData, jsonSerializerOptions));
-        return Ok(browsePaths);
+                .ToArray();
+
+        return Content(JsonSerializer.Serialize(browsePaths, jsonSerializerOptions));
     }
     
     [HttpGet("Prediction", Name = "Prediction")]
@@ -89,13 +90,5 @@ public class UsgsController : ControllerBase
         [FromQuery(Name = "row")] int row)
     {
         return Ok(await UsgsDateTimePredictionService.Predict(UsgsApiService, path, row));
-    }
-    
-    private static DateTime[] ReduceResponse(UsgsApiResponse<SceneSearchResponse> response)
-    {
-        return response.Data!.ReturnedSceneData
-            .Select(sceneData => sceneData.PublishDate)
-            .OrderDescending()
-            .ToArray();
     }
 }
