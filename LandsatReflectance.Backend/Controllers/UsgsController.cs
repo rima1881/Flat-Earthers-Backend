@@ -1,6 +1,10 @@
-﻿using LandsatReflectance.Backend.Models.UsgsApi.Endpoints;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using LandsatReflectance.Backend.Models.UsgsApi;
+using LandsatReflectance.Backend.Models.UsgsApi.Endpoints;
 using LandsatReflectance.Backend.Models.UsgsApi.Types.Request;
 using LandsatReflectance.Backend.Services;
+using LandsatReflectance.Backend.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -24,70 +28,74 @@ public class UsgsController : ControllerBase
         [FromQuery(Name = "path")] int path, 
         [FromQuery(Name = "row")] int row)
     {
-        // Acquisition filter
-        var intervalDuration = new TimeSpan(30, 0, 0, 0);
-        var acquisitionFilter = new AcquisitionFilter
+        // Creating the request
+        var metadataFilter = new MetadataFilterAnd 
         {
-            Start = DateTime.Now - intervalDuration,
-            End = DateTime.Now
+            ChildFilters = [
+                new MetadataFilterValue  // Path filer
+                {
+                    FilterId = "5e83d14fb9436d88",
+                    Value = path.ToString(),
+                    Operand = MetadataFilterValue.MetadataValueOperand.Equals
+                },
+                new MetadataFilterValue  // Row filter
+                {
+                    FilterId = "5e83d14ff1eda1b8",
+                    Value = row.ToString(),
+                    Operand = MetadataFilterValue.MetadataValueOperand.Equals
+                }
+            ] 
         };
-
-        // Metadata filter
-        var pathFilter = new MetadataFilterValue
-        {
-            FilterId = "5e83d14fb9436d88",
-            Value = path.ToString(),
-            Operand = MetadataFilterValue.MetadataValueOperand.Equals
-        };
-        var rowFilter = new MetadataFilterValue
-        {
-            FilterId = "5e83d14ff1eda1b8",
-            Value = row.ToString(),
-            Operand = MetadataFilterValue.MetadataValueOperand.Equals
-        };
-        var metadataFilter = new MetadataFilterAnd
-        {
-            ChildFilters = [ pathFilter, rowFilter ]
-        };
-        
-        
         var sceneFilter = new SceneFilter
         {
-            AcquisitionFilter = acquisitionFilter,
             MetadataFilter = metadataFilter
         };
         
-        
-        // Scene search
         var sceneSearchRequest = new SceneSearchRequest
         {
             DatasetName = "landsat_ot_c2_l2",
-            MaxResults = 50,
+            MaxResults = 5,
             UseCustomization = false,
             SceneFilter = sceneFilter,
         };
 
 
+        // Query endpoint & process results
         var response = await UsgsApiService.QuerySceneSearch(sceneSearchRequest);
 
         var data = response.Data;
         if (data is null)
             return BadRequest();
 
-        var browsePaths =
+        var jsonSerializerOptions = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters = { new SceneDataSimplifiedConverter() }
+        };
+
+        var browsePaths = 
             data.ReturnedSceneData
                 .Where(sceneData => sceneData.BrowseInfos.Length > 0)
-                .Select(sceneData => sceneData.BrowseInfos[0].BrowsePath);
-        
+                .Select(sceneData => JsonSerializer.Serialize(sceneData, jsonSerializerOptions));
         return Ok(browsePaths);
     }
     
     [HttpGet("Prediction", Name = "Prediction")]
     [SwaggerOperation(Summary = "Returns information about the next predicted acquisition time for an image/scene.")]
-    public IActionResult GetNextAcquisitionPrediction(
+    public async Task<IActionResult> GetNextAcquisitionPrediction(
         [FromQuery(Name = "path")] int path, 
         [FromQuery(Name = "row")] int row)
     {
-        return Ok();
+        return Ok(await UsgsDateTimePredictionService.Predict(UsgsApiService, path, row));
+    }
+    
+    private static DateTime[] ReduceResponse(UsgsApiResponse<SceneSearchResponse> response)
+    {
+        return response.Data!.ReturnedSceneData
+            .Select(sceneData => sceneData.PublishDate)
+            .OrderDescending()
+            .ToArray();
     }
 }

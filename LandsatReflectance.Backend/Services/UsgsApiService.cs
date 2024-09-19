@@ -17,7 +17,8 @@ public class UsgsApiService
         {
             new UsgsApiResponseConverter<SceneSearchResponse>(),
             new UsgsApiResponseConverter<LoginTokenResponse>(),
-            new MetadataConverter()
+            new MetadataConverter(),
+            new CustomDateTimeConverter()
         }
     };
     
@@ -56,8 +57,9 @@ public class UsgsApiService
 
         HttpClient.DefaultRequestHeaders.Add("X-Auth-Token", loginTokenResponse.AuthToken);
     }
-    
 
+
+#region Query Endpoint
 
     public async Task<UsgsApiResponse<SceneSearchResponse>> QuerySceneSearch(SceneSearchRequest sceneSearchRequest)
     {
@@ -70,8 +72,6 @@ public class UsgsApiService
         string asJson = JsonSerializer.Serialize(loginTokenRequest, JsonSerializerOptions);
         return await QueryAsync<LoginTokenResponse>(HttpClient, "login-token", asJson);
     }
-    
-    
     
     private static async Task<UsgsApiResponse<TResponseType>> QueryAsync<TResponseType>(
         HttpClient httpClient, 
@@ -95,4 +95,6 @@ public class UsgsApiService
 
         return deserializedObject;
     }
+    
+#endregion
 }

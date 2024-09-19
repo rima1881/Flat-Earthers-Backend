@@ -70,7 +70,7 @@ public class UsgsApiResponseConverter<T> : JsonConverter<UsgsApiResponse<T>> whe
     {
         using var jsonDocument = JsonDocument.ParseValue(ref reader);
         string rawJson = jsonDocument.RootElement.GetRawText();
-
+        
         switch (typeof(T))
         {
             case var t when t == typeof(SceneSearchResponse):

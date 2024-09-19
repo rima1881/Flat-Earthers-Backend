@@ -58,5 +58,5 @@ public class SceneData
     public SpatialArea? SpatialBounds { get; set; }
     public SpatialArea? SpatialCoverage { get; set; }
     public TemporalCoverage? TemporalCoverage { get; set; }
-    public DateTime DateTime { get; set; } = DateTime.MinValue;
+    public DateTime PublishDate { get; set; } = DateTime.MinValue;
 }

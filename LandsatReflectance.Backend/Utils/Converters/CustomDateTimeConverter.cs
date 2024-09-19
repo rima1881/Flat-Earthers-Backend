@@ -11,7 +11,11 @@ namespace LandsatReflectance.Backend.Utils;
 
 public class CustomDateTimeConverter : JsonConverter<DateTime>
 {
-    private const string DateFormat = "yyyy-MM-dd HH:mm:ss";
+    private static string[] ValidDateFormats =
+    [
+        "yyyy-MM-dd HH:mm:sszzz",
+        "yyyy-MM-dd HH:mm:ss"
+    ];
 
 
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -22,10 +26,21 @@ public class CustomDateTimeConverter : JsonConverter<DateTime>
             if (dateString is null)
                 throw new JsonException("Expected a string to parse into a date, got nothing.");
 
-            if (DateTime.TryParseExact(dateString, DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
-                return date;
+            if (DateTimeOffset.TryParse(dateString, out var dateTimeOffset))
+                return dateTimeOffset.DateTime;
             
-            throw new JsonException($"Unable to convert \"{dateString}\" to DateTime using format \"{DateFormat}\".");
+            /*
+            if (DateTimeOffset.TryParseExact(dateString, ValidDateFormats[0], CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateTimeOffset))
+                return dateTimeOffset.DateTime;
+            
+            if (DateTime.TryParseExact(dateString, ValidDateFormats[1], CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+                return date;
+             */
+            
+            throw new JsonException();
+
+            // var formatsString = string.Join(", ", ValidDateFormats.Select(str => $"\"{str}\""));
+            // throw new JsonException($"Unable to convert \"{dateString}\" to DateTime using any of the formats [{formatsString}].");
         }
 
         throw new JsonException($"Unexpected token type {reader.TokenType} when parsing DateTime.");
@@ -34,6 +49,6 @@ public class CustomDateTimeConverter : JsonConverter<DateTime>
 
     public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
     {
-        writer.WriteStringValue(value.ToString(DateFormat, CultureInfo.InvariantCulture));
+        writer.WriteStringValue(value.ToString(ValidDateFormats[0], CultureInfo.InvariantCulture));
     }
 }
