@@ -15,7 +15,7 @@ public class SceneData
     public bool? HasCustomizedMetadata { get; set; }
 
     public Metadata[] Metadata { get; set; } = [];
-    public Options? Options { get; set; }
+    public QueryOptions? Options { get; set; }
     public Selected? Selected { get; set; }
     public SpatialArea? SpatialBounds { get; set; }
     public SpatialArea? SpatialCoverage { get; set; }

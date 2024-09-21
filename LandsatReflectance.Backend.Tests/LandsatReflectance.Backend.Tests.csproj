@@ -40,6 +40,9 @@
       <None Update="Data\Endpoints\SampleResponses\scene-metadata-list-1.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="Data\Endpoints\SampleResponses\scene-search-2.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

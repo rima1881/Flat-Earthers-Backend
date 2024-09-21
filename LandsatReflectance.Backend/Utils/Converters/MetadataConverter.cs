@@ -60,6 +60,7 @@ public class MetadataConverter : JsonConverter<Metadata>
                 {
                     JsonTokenType.Number => reader.GetInt32().ToString(),
                     JsonTokenType.String => reader.GetString() ?? "",
+                    JsonTokenType.Null => "",
                     _ => throw new JsonException($"Error parsing the value for the property \"Value\", expected a number or string, got token type\"{reader.TokenType.ToString()}\"")
                 };
                 break;

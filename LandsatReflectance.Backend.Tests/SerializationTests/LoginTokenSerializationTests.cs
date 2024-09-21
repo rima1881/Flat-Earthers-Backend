@@ -33,42 +33,4 @@ public class LoginTokenSerializationTests
         
         Assert.Pass();
     }
-    
-    
-    [Test]
-    public async Task Test2()
-    {
-        /*
-        var jsonSerializerOptions = new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            PropertyNameCaseInsensitive = true,
-            Converters =
-            {
-                new UsgsApiResponseConverter<LoginTokenResponse>(),
-                new MetadataConverter()
-            }
-        };
-         */
-
-
-
-        var usgsApiKeyService = new UsgsApiKeyService();
-        var service = new UsgsApiService(usgsApiKeyService);
-
-        var loginTokenRequest = new LoginTokenRequest
-        {
-            Username = usgsApiKeyService.Username,
-            Token = usgsApiKeyService.Token,
-        };
-        var response = await service.QueryLoginToken(loginTokenRequest);
-        
-        if (response is null)
-            Assert.Fail();
-        
-        if (response!.Data is null)
-            Assert.Fail();
-        
-        Assert.Pass();
-    }
 }
