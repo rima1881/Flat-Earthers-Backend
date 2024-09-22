@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using LandsatReflectance.Backend.Middleware;
 using LandsatReflectance.Backend.Models.UsgsApi.Endpoints;
 using LandsatReflectance.Backend.Services;
 using LandsatReflectance.Backend.Utils;
@@ -28,13 +29,18 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 
 builder.Services.AddControllers();
+
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<UsgsApiKeyService>();
+builder.Services.AddSingleton<SceneEntityIdCachingService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<UsgsApiService>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => c.EnableAnnotations());
 
-builder.Services.AddSingleton<UsgsApiKeyService>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<UsgsApiService>();
+
 
 var app = builder.Build();
 
@@ -44,6 +50,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<DefaultErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

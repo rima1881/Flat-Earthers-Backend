@@ -57,9 +57,9 @@ public class UsgsApiService
         return await QueryAsync<LoginTokenResponse>("login-token", asJson);
     }
     
-    public async Task<UsgsApiResponse<SceneListAddResponse>> QuerySceneListAdd(SceneListAddResponse sceneListAddResponse)
+    public async Task<UsgsApiResponse<SceneListAddResponse>> QuerySceneListAdd(SceneListAddRequest sceneListAddRequest)
     {
-        string asJson = JsonSerializer.Serialize(sceneListAddResponse, m_jsonSerializerOptions);
+        string asJson = JsonSerializer.Serialize(sceneListAddRequest, m_jsonSerializerOptions);
         return await QueryAsync<SceneListAddResponse>("scene-list-add", asJson);
     }
     
@@ -72,7 +72,7 @@ public class UsgsApiService
     public async Task<UsgsApiResponse<SceneMetadataListResponse>> QuerySceneMetadataList(SceneMetadataListRequest sceneMetadataListRequest)
     {
         string asJson = JsonSerializer.Serialize(sceneMetadataListRequest, m_jsonSerializerOptions);
-        return await QueryAsync<SceneMetadataListResponse>("scene-metadata_list", asJson);
+        return await QueryAsync<SceneMetadataListResponse>("scene-metadata-list", asJson);
     }
 
     public async Task<UsgsApiResponse<SceneSearchResponse>> QuerySceneSearch(SceneSearchRequest sceneSearchRequest)
@@ -91,16 +91,16 @@ public class UsgsApiService
         var response = await m_httpClient.PostAsync(requestUri, contents);
 
         if (!response.IsSuccessStatusCode)
-            throw new Exception();  // TODO: Write
+            throw new HttpRequestException($"Request failed with status code: {response.StatusCode}. Reason: {response.ReasonPhrase}");
 
         var responseContentsRaw = await response.Content.ReadAsStringAsync();
         if (string.IsNullOrEmpty(responseContentsRaw))
-            throw new Exception();  // TODO: Write
-
+            throw new InvalidOperationException("The response content is empty or null, which is unexpected.");
+        
         var deserializedObject = JsonSerializer.Deserialize<UsgsApiResponse<TResponseType>>(responseContentsRaw, m_jsonSerializerOptions);
         if (deserializedObject is null)
-            throw new Exception();  // TODO: Write
-
+            throw new JsonException("Failed to deserialize the API response. The JSON format might be invalid or unexpected.");
+        
         return deserializedObject;
     }
     
