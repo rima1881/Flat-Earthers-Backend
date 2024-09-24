@@ -42,21 +42,21 @@ public class MetadataConverter : JsonConverter<Metadata>
         throw new JsonException("Reached the end of the reader without encountering a \"JsonTokenType.StartObject\"");
     }
     
-    private void DeserializeProperty(ref Utf8JsonReader reader, JsonSerializerOptions _, string propertyName, ref Metadata usgsApiResponse)
+    private void DeserializeProperty(ref Utf8JsonReader reader, JsonSerializerOptions _, string propertyName, ref Metadata metadata)
     {
         switch (propertyName)
         {
             case "id":
-                usgsApiResponse.Id = reader.GetString() ?? string.Empty;
+                metadata.Id = reader.GetString() ?? string.Empty;
                 break;
             case "fieldName":
-                usgsApiResponse.FieldName = reader.GetString() ?? string.Empty;
+                metadata.FieldName = reader.GetString() ?? string.Empty;
                 break;
             case "dictionaryLink":
-                usgsApiResponse.DictionaryLink = reader.GetString() ?? string.Empty;
+                metadata.DictionaryLink = reader.GetString() ?? string.Empty;
                 break;
             case "value":
-                usgsApiResponse.Value = reader.TokenType switch
+                metadata.Value = reader.TokenType switch
                 {
                     JsonTokenType.Number => reader.GetInt32().ToString(),
                     JsonTokenType.String => reader.GetString() ?? "",
@@ -67,8 +67,10 @@ public class MetadataConverter : JsonConverter<Metadata>
         }
     }
 
-    public override void Write(Utf8JsonWriter writer, Metadata value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, Metadata metadata, JsonSerializerOptions options)
     {
-        throw new NotImplementedException();
+        // Use default serializer, and write the 'value' property as a string regardless.
+        // Up to the user to determine if the value is an int and parse it.
+        writer.WriteRawValue(JsonSerializer.Serialize(metadata, options));
     }
 }

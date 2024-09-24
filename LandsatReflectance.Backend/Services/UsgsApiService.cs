@@ -35,15 +35,11 @@ public class UsgsApiService
         var response = QueryLoginToken(loginTokenRequest).Result;
 
         if (response.ErrorCode is not null)
-        {
-            throw new NotImplementedException();
-        }
+            throw new InvalidOperationException($"The USGS m2m API response returned an error code \"{response.ErrorCode}\" with message \"{response.ErrorMessage}\".");
 
         var loginTokenResponse = response.Data;
         if (loginTokenResponse is null)
-        {
-            throw new NotImplementedException();
-        }
+            throw new InvalidOperationException($"The USGS m2m API response dit not return an error code, but had no data.");
 
         m_httpClient.DefaultRequestHeaders.Add("X-Auth-Token", loginTokenResponse.AuthToken);
     }

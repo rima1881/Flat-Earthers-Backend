@@ -26,6 +26,7 @@ public class DefaultErrorHandlingMiddleware
 
     public static Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
     {
-        throw new NotImplementedException();
+        // Maybe add some extra stuff here idk
+        return Task.CompletedTask;
     }
 }

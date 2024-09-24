@@ -30,17 +30,17 @@ public class MetadataFilterValue : MetadataFilter
     {
         Equals, Like
     }
-    
-    public required string FilterId { get; set; }
-    public required string Value { get; set; }
-    public required MetadataValueOperand Operand { get; set; }
+
+    public string FilterId { get; set; } = string.Empty;
+    public string Value { get; set; } = string.Empty;
+    public MetadataValueOperand Operand { get; set; }
 }
 
 
 [JsonConverter(typeof(MetadataFilterBetweenConverter))]
 public class MetadataFilterBetween : MetadataFilter
 {
-    public required string FilterId { get; set; }
-    public required int FirstValue { get; set; }
-    public required int SecondValue { get; set; }
+    public string FilterId { get; set; } = string.Empty;
+    public int FirstValue { get; set; }
+    public int SecondValue { get; set; }
 }

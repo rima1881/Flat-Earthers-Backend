@@ -80,14 +80,45 @@ public class MetadataFilterOrConverter : JsonConverter<MetadataFilterOr>
 }
 
 
-// TODO: Find a way use 'nameof', while using the json serializer options
-
 
 public class MetadataFilterValueConverter : JsonConverter<MetadataFilterValue>
 {
     public override MetadataFilterValue? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        throw new NotImplementedException();
+        if (reader.TokenType != JsonTokenType.StartObject)
+            throw new JsonException($"Expected a \"JsonTokenType.StartObject\", got a {reader.TokenType.ToString()}");
+
+        var metadataFilterValue = new MetadataFilterValue();
+
+        while (reader.Read())
+        {
+            switch (reader.TokenType)
+            {
+                case JsonTokenType.EndObject:
+                    return metadataFilterValue;
+                case JsonTokenType.PropertyName:
+                    string? propertyName = reader.GetString();
+                    if (propertyName is null)
+                        break;
+
+                    reader.Read();
+                    switch (propertyName)
+                    {
+                        case "filterId":
+                            metadataFilterValue.FilterId = reader.GetString() ?? string.Empty;
+                            break;
+                        case "value":
+                            metadataFilterValue.Value = reader.GetString() ?? string.Empty;
+                            break;
+                    }
+                    break;
+                default:
+                    reader.Skip();
+                    break;
+            }
+        }
+        
+        throw new JsonException("Reached the end of the reader without encountering a \"JsonTokenType.StartObject\"");
     }
 
     public override void Write(Utf8JsonWriter writer, MetadataFilterValue metadataFilterValue, JsonSerializerOptions options)
@@ -114,9 +145,45 @@ public class MetadataFilterBetweenConverter : JsonConverter<MetadataFilterBetwee
 {
     public override MetadataFilterBetween? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        throw new NotImplementedException();
-    }
+        if (reader.TokenType != JsonTokenType.StartObject)
+            throw new JsonException($"Expected a \"JsonTokenType.StartObject\", got a {reader.TokenType.ToString()}");
 
+        var metadataFilterBetween = new MetadataFilterBetween();
+
+        while (reader.Read())
+        {
+            switch (reader.TokenType)
+            {
+                case JsonTokenType.EndObject:
+                    return metadataFilterBetween;
+                case JsonTokenType.PropertyName:
+                    string? propertyName = reader.GetString();
+                    if (propertyName is null)
+                        break;
+
+                    reader.Read();
+                    switch (propertyName)
+                    {
+                        case "filterId":
+                            metadataFilterBetween.FilterId = reader.GetString() ?? string.Empty;
+                            break;
+                        case "firstValue":
+                            metadataFilterBetween.FirstValue = reader.GetInt32();
+                            break;
+                        case "secondValue":
+                            metadataFilterBetween.SecondValue = reader.GetInt32();
+                            break;
+                    }
+                    break;
+                default:
+                    reader.Skip();
+                    break;
+            }
+        }
+        
+        throw new JsonException("Reached the end of the reader without encountering a \"JsonTokenType.StartObject\"");
+    }
+    
     public override void Write(Utf8JsonWriter writer, MetadataFilterBetween metadataFilterBetween, JsonSerializerOptions options)
     {
         writer.WriteStartObject();

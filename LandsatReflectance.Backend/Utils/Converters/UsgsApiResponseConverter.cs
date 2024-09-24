@@ -131,7 +131,43 @@ public class UsgsApiResponseConverter<T> : JsonConverter<UsgsApiResponse<T>> whe
 
     public override void Write(Utf8JsonWriter writer, UsgsApiResponse<T> value, JsonSerializerOptions options)
     {
-        throw new NotImplementedException();
+        writer.WriteStartObject();
+        
+        writer.WriteNumber("requestId", value.RequestId);
+        writer.WriteString("version", "or");
+        
+        if (value.ErrorCode is null)
+            writer.WriteNull("errorCode");
+        else
+            writer.WriteNumber("errorCode", value.ErrorCode.Value);
+        
+        if (value.ErrorMessage is null)
+            writer.WriteNull("errorMessage");
+        else
+            writer.WriteString("errorMessage", value.ErrorMessage);
+
+        if (value.Data is not null)
+        {
+            var rawJsonValue = typeof(T) switch
+            {
+                var t when t == typeof(LoginTokenResponse) => 
+                    JsonSerializer.Serialize(value.Data, typeof(LoginTokenResponse), options),
+                var t when t == typeof(SceneListAddResponse) => 
+                    JsonSerializer.Serialize(value.Data, typeof(SceneListAddResponse), options),
+                var t when t == typeof(SceneListGetResponse) => 
+                    JsonSerializer.Serialize(value.Data, typeof(SceneListGetResponse), options),
+                var t when t == typeof(SceneMetadataListResponse) => 
+                    JsonSerializer.Serialize(value.Data, typeof(SceneMetadataListResponse), options),
+                var t when t == typeof(SceneSearchResponse) => 
+                    JsonSerializer.Serialize(value.Data, typeof(SceneSearchResponse), options),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            
+            writer.WritePropertyName("data");
+            writer.WriteRawValue(rawJsonValue);
+        }
+        
+        writer.WriteEndObject();
     }
 }
 
