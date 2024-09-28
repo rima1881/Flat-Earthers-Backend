@@ -4,7 +4,7 @@ using LandsatReflectance.Backend.Models.UsgsApi.Endpoints;
 using LandsatReflectance.Backend.Services;
 using LandsatReflectance.Backend.Utils;
 
-namespace LandsatReflectance.Backend.Tests;
+namespace LandsatReflectance.Backend.Tests.SerializationTests;
 
 public class LoginTokenSerializationTests 
 {

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using LandsatReflectance.Backend.Models.UsgsApi.Types.Request;
 
-namespace LandsatReflectance.Backend.Tests;
+namespace LandsatReflectance.Backend.Tests.SerializationTests;
 
 public class MetadataFilterSerializationTests
 {

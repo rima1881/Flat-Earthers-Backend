@@ -6,11 +6,11 @@ namespace LandsatReflectance.Backend.Services;
 
 public static class UsgsDateTimePredictionService
 {
-    private record SceneDateInfo
+    public record SceneDateInfo
     {
-        internal required DateTime PublishDate { get; init; }
-        internal required DateTime AcquisitionStartDateTime { get; init; }
-        internal required DateTime AcquisitionEndDateTime { get; init; }
+        public required DateTime PublishDate { get; init; }
+        public required DateTime AcquisitionStartDateTime { get; init; }
+        public required DateTime AcquisitionEndDateTime { get; init; }
     }
 
     public record PredictionResults 
@@ -29,20 +29,22 @@ public static class UsgsDateTimePredictionService
     public static async Task<PredictionResults> Predict(UsgsApiService usgsApiService, int path, int row, int numDataEntries = 10)
     {
         var (satellite8DateInfos, satellite9DateInfos) = await GetDateInfos(usgsApiService, path, row, numDataEntries);
+        return PredictCore(satellite8DateInfos, satellite9DateInfos);
+    }
 
-        var getStartDates = (SceneDateInfo[] sceneDateInfos) => 
-            sceneDateInfos.Select(obj => obj.AcquisitionStartDateTime).ToArray();
-        var getPublishDates = (SceneDateInfo[] sceneDateInfos) => 
-            sceneDateInfos.Select(obj => obj.PublishDate).ToArray();
+    internal static PredictionResults PredictCore(SceneDateInfo[] sat8SceneDateInfo, SceneDateInfo[] sat9SceneDateInfo)
+    {
+        var sat8StartDates = GetStartDates(sat8SceneDateInfo);
+        var sat9StartDates = GetStartDates(sat9SceneDateInfo);
 
-        var sat8StartDates = getStartDates(satellite8DateInfos);
-        var sat9StartDates = getStartDates(satellite9DateInfos);
+        var sat8PublishDates = GetPublishDates(sat8SceneDateInfo);
+        var sat9PublishDates = GetPublishDates(sat9SceneDateInfo);
         
         var (predictedStartDate, averageTimespanBetweenStartTimes, predictedStartDateConfidence) =
             CalculatePredicted(sat8StartDates, sat9StartDates);
         
         var (predictedPublishDate, averageTimespanBetweenPublishDates, predictedPublishDateConfidence) =
-            CalculatePredicted(getPublishDates(satellite8DateInfos), getPublishDates(satellite9DateInfos));
+            CalculatePredicted(sat8PublishDates, sat9PublishDates);
 
         var predictedSatellite = sat8StartDates[0] > sat9StartDates[0] ? 9 : 8;
 
@@ -57,55 +59,16 @@ public static class UsgsDateTimePredictionService
             PredictedSatellite = predictedSatellite
         };
     }
-
-    private static (DateTime predictedTime, TimeSpan averageTimeSpan, double confidenceLevel) CalculatePredicted(DateTime[] satellite8Dates, DateTime[] satellite9Dates)
-    {
-        var datesToProcess = satellite8Dates[0] > satellite9Dates[0] 
-            ? satellite9Dates 
-            : satellite8Dates;
-        
-        /*
-        var otherDates = satellite8Dates[0] > satellite9Dates[0] 
-            ? satellite8Dates 
-            : satellite9Dates;
-         */
-
-        var timespans = new TimeSpan[datesToProcess.Length - 1];
-        for (int i = 0; i < datesToProcess.Length - 1; i++)
-        {
-            timespans[i] = datesToProcess[i] - datesToProcess[i + 1];
-        }
-
-        var sum = timespans.Aggregate(TimeSpan.Zero, (acc, timeSpan) => timeSpan + acc);
-        var avgTicks = sum.Ticks / timespans.Length;
-        var avgTimespan = TimeSpan.FromTicks(avgTicks);
-
-        var predictedTime = datesToProcess[0] + avgTimespan;
-
-        return (predictedTime, avgTimespan, CalculateConfidenceLevel(timespans));
-
-
-        double CalculateConfidenceLevel(TimeSpan[] ts)
-        {
-            // 1. Calculate variance
-            int n = ts.Length;
-            var asTicks = ts.Select(timeSpan => timeSpan.Ticks).ToArray();
-            double mean = asTicks.Average();
-            double sumOfSquares = asTicks.Select(ticks => Math.Pow(ticks - mean, 2)).Sum();
-            double variance = sumOfSquares / n;
-            double normalizedVariance = Math.Log10(1 + variance);
-
-            // 2. Normalize to a confidence level
-            const double maxVariance = 50;
-            double clampedVariance = Math.Min(normalizedVariance, maxVariance);
-
-            return 1 - Math.Pow(clampedVariance / (0.6 * maxVariance), 5);
-            // return Math.Pow(Math.E, -Math.Pow(clampedVariance / maxVariance, 2));
-            // return 1 - (newVariance / maxVariance);
-        }
-    }
-
-    private static async Task<(SceneDateInfo[] satellite8DateInfos, SceneDateInfo[] satellite9DateInfos)> GetDateInfos(
+    
+    
+    internal static DateTime[] GetStartDates(SceneDateInfo[] sceneDateInfos) => 
+        sceneDateInfos.Select(obj => obj.AcquisitionStartDateTime).ToArray();
+    
+    internal static DateTime[] GetPublishDates(SceneDateInfo[] sceneDateInfos) => 
+        sceneDateInfos.Select(obj => obj.PublishDate).ToArray();
+    
+    
+    internal static async Task<(SceneDateInfo[] satellite8DateInfos, SceneDateInfo[] satellite9DateInfos)> GetDateInfos(
         UsgsApiService usgsApiService,
         int path,
         int row,
@@ -225,5 +188,52 @@ public static class UsgsDateTimePredictionService
         };
 
         return (sceneSearchRequestSatellite8, sceneSearchRequestSatellite9);
+    }
+    
+    internal static (DateTime predictedTime, TimeSpan averageTimeSpan, double confidenceLevel) CalculatePredicted(DateTime[] satellite8Dates, DateTime[] satellite9Dates)
+    {
+        var datesToProcess = satellite8Dates[0] > satellite9Dates[0] 
+            ? satellite9Dates 
+            : satellite8Dates;
+        
+        /*
+        var otherDates = satellite8Dates[0] > satellite9Dates[0] 
+            ? satellite8Dates 
+            : satellite9Dates;
+         */
+
+        var timespans = new TimeSpan[datesToProcess.Length - 1];
+        for (int i = 0; i < datesToProcess.Length - 1; i++)
+        {
+            timespans[i] = datesToProcess[i] - datesToProcess[i + 1];
+        }
+
+        var sum = timespans.Aggregate(TimeSpan.Zero, (acc, timeSpan) => timeSpan + acc);
+        var avgTicks = sum.Ticks / timespans.Length;
+        var avgTimespan = TimeSpan.FromTicks(avgTicks);
+
+        var predictedTime = datesToProcess[0] + avgTimespan;
+
+        return (predictedTime, avgTimespan, CalculateConfidenceLevel(timespans));
+
+
+        double CalculateConfidenceLevel(TimeSpan[] ts)
+        {
+            // 1. Calculate variance
+            int n = ts.Length;
+            var asTicks = ts.Select(timeSpan => timeSpan.Ticks).ToArray();
+            double mean = asTicks.Average();
+            double sumOfSquares = asTicks.Select(ticks => Math.Pow(ticks - mean, 2)).Sum();
+            double variance = sumOfSquares / n;
+            double normalizedVariance = Math.Log10(1 + variance);
+
+            // 2. Normalize to a confidence level
+            const double maxVariance = 50;
+            double clampedVariance = Math.Min(normalizedVariance, maxVariance);
+
+            return 1 - Math.Pow(clampedVariance / (0.6 * maxVariance), 5);
+            // return Math.Pow(Math.E, -Math.Pow(clampedVariance / maxVariance, 2));
+            // return 1 - (newVariance / maxVariance);
+        }
     }
 }

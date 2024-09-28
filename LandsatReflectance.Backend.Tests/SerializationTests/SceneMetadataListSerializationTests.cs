@@ -3,7 +3,7 @@ using LandsatReflectance.Backend.Models.UsgsApi;
 using LandsatReflectance.Backend.Models.UsgsApi.Endpoints;
 using LandsatReflectance.Backend.Utils;
 
-namespace LandsatReflectance.Backend.Tests;
+namespace LandsatReflectance.Backend.Tests.SerializationTests;
 
 public class SceneMetadataListSerializationTests
 {
