@@ -1,11 +1,13 @@
 ﻿using System.Text.RegularExpressions;
 using LandsatReflectance.Backend.Models;
 using LandsatReflectance.Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace LandsatReflectance.Backend.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class UserController : ControllerBase

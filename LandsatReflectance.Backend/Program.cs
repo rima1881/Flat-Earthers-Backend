@@ -1,10 +1,15 @@
+using System.Text;
 using System.Text.Json;
+
 using System.Text.Json.Serialization;
 using LandsatReflectance.Backend.Middleware;
 using LandsatReflectance.Backend.Models.UsgsApi.Endpoints;
 using LandsatReflectance.Backend.Services;
 using LandsatReflectance.Backend.Utils;
 using LandsatReflectance.Backend.Utils.SourceGenerators;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +32,38 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.PropertyNameCaseInsensitive = true;
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
+
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        var authSecretKey = new KeysService().AuthSecretKey;
+        var key = Encoding.UTF8.GetBytes(authSecretKey);
+        
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ClockSkew = TimeSpan.Zero
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = msgReceivedContext =>
+            {
+                msgReceivedContext.Token = msgReceivedContext.Request.Headers["X-Auth-Token"].FirstOrDefault();
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 
@@ -55,6 +92,7 @@ app.UseMiddleware<DefaultErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

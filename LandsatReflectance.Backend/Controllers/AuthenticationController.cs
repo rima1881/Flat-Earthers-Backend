@@ -37,6 +37,8 @@ public class AuthenticationController : ControllerBase
             new Claim(JwtRegisteredClaimNames.Sub, email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
+        
+        // TODO: 2. Add issuer and audience down the line
 
         var token = new JwtSecurityToken(
             claims: claims, 

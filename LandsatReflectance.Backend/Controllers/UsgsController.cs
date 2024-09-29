@@ -6,6 +6,7 @@ using LandsatReflectance.Backend.Models.UsgsApi.Types.Request;
 using LandsatReflectance.Backend.Services;
 using LandsatReflectance.Backend.Utils;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
@@ -13,6 +14,7 @@ using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
 namespace LandsatReflectance.Backend.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("")]
 [SwaggerTag("This controller manages interactions with the USGS m2m API.")]
