@@ -1,15 +1,16 @@
-﻿using System.Buffers;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Authentication;
+﻿using System.Text;
 using System.Security.Claims;
-using System.Text;
-using LandsatReflectance.Backend.Services;
+using System.Security.Authentication;
+using System.IdentityModel.Tokens.Jwt;
+
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
-using Swashbuckle.AspNetCore.Annotations;
+
+using LandsatReflectance.Backend.Services;
+
 
 namespace LandsatReflectance.Backend.Controllers;
+
 
 [ApiController]
 [Route("")]
@@ -22,10 +23,15 @@ public class AuthenticationController : ControllerBase
         m_authSecretKey = keysService.AuthSecretKey;
     }
 
+
+    public class LoginRequest
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
     [HttpPost("Login", Name = "Login")]
-    public IActionResult Login(
-        [FromQuery(Name = "email")] string email = "",
-        [FromQuery(Name = "password")] string password = "")
+    public IActionResult Login([FromBody] LoginRequest loginRequest)
     {
         // TODO: 1. Check if the credentials if they match whatever we have in the database.
 
@@ -34,7 +40,7 @@ public class AuthenticationController : ControllerBase
         
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, email),
+            new Claim(JwtRegisteredClaimNames.Sub, loginRequest.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
         
