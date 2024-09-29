@@ -31,7 +31,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddControllers();
 
 builder.Services.AddMemoryCache();
-builder.Services.AddSingleton<UsgsApiKeyService>();
+builder.Services.AddSingleton<KeysService>();
 builder.Services.AddSingleton<SceneEntityIdCachingService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UsgsApiService>();

@@ -17,10 +17,10 @@ public class UsgsApiService
     private readonly JsonSerializerOptions m_jsonSerializerOptions;
     private readonly HttpClient m_httpClient;
 
-    public UsgsApiService(UsgsApiKeyService usgsApiKeyService, IOptions<JsonOptions> options)
+    public UsgsApiService(KeysService keysService, IOptions<JsonOptions> options)
     {
-        m_username = usgsApiKeyService.Username;
-        m_usgsToken = usgsApiKeyService.Token;
+        m_username = keysService.UsgsUsername;
+        m_usgsToken = keysService.UsgsAppToken;
         m_jsonSerializerOptions = options.Value.SerializerOptions;
         
         m_httpClient = new HttpClient();
