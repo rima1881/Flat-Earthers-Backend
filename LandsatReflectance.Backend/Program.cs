@@ -70,7 +70,9 @@ builder.Services.AddControllers();
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<KeysService>();
 builder.Services.AddSingleton<SceneEntityIdCachingService>();
-builder.Services.AddScoped<UserService>();
+
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddScoped<UsgsApiService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -12,11 +12,11 @@ namespace LandsatReflectance.Backend.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly UserService UserService;
+    private readonly IUserService m_userService;
     
-    public UserController(UserService userService)
+    public UserController(IUserService userService)
     {
-        UserService = userService;
+        m_userService = userService;
     }
 
 
@@ -25,7 +25,7 @@ public class UserController : ControllerBase
     public IActionResult GetUserInfo(
         [FromQuery(Name = "email")] string email = "")
     {
-        var selectedUser = UserService.Users.FirstOrDefault(user => string.Equals(user.Email, email));
+        var selectedUser = m_userService.GetUser(email);
 
         if (selectedUser is not null)
             return Ok(selectedUser);
@@ -38,7 +38,7 @@ public class UserController : ControllerBase
             Email = email,
             SelectedRegions = []
         };
-        UserService.Users.Add(newUser);
+        m_userService.AddUser(newUser);
         
         return Ok(newUser);
     }
