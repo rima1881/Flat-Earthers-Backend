@@ -71,13 +71,17 @@ builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<KeysService>();
 builder.Services.AddSingleton<SceneEntityIdCachingService>();
 
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserService, FileUserService>();
+builder.Services.AddScoped<ITargetService, FileTargetService>();
 
 builder.Services.AddScoped<UsgsApiService>();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c => c.EnableAnnotations());
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(c => c.EnableAnnotations());
+}
 
 
 
@@ -86,6 +90,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
+    
     app.UseSwagger();
     app.UseSwaggerUI();
 }

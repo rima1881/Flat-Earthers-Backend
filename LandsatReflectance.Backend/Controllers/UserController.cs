@@ -25,7 +25,7 @@ public class UserController : ControllerBase
     public IActionResult GetUserInfo(
         [FromQuery(Name = "email")] string email = "")
     {
-        var selectedUser = m_userService.GetUser(email);
+        var selectedUser = m_userService.TryGetUser(email);
 
         if (selectedUser is not null)
             return Ok(selectedUser);
@@ -36,12 +36,26 @@ public class UserController : ControllerBase
         var newUser = new User
         {
             Email = email,
-            SelectedRegions = []
+            Targets = []
         };
         m_userService.AddUser(newUser);
         
         return Ok(newUser);
     }
+
+    
+    public class RegisterUserRequest
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public Target[] Targets { get; set; } = [];
+    } 
+    
+    public IActionResult RegisterUser([FromBody] RegisterUserRequest registerUserRequest)
+    {
+        throw new NotImplementedException();
+    }
+    
     
     // chatgpt code fr fr
     private static bool IsValidEmail(string str)

@@ -23,7 +23,7 @@ public class TargetController
     public class AddTargetsRequest
     {
         public string Email { get; set; } = String.Empty;
-        public SelectedRegion[] SelectedRegions { get; set; } = [];
+        public Target[] Targets { get; set; } = [];
     }
 
     [HttpPost("AddTargets", Name = "AddTargets")]

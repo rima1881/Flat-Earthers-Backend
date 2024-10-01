@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace LandsatReflectance.Backend.Tests.Services;
 
 [TestFixture]
-public class UserServiceTests
+public class FileUserServiceTests
 {
     private WebApplicationFactory<Program> m_factory = null!;
     
@@ -43,12 +43,12 @@ public class UserServiceTests
         };
         userService.AddUser(user1);
 
-        var retrievedUser1 = userService.GetUser(email1);
+        var retrievedUser1 = userService.TryGetUser(email1);
         Assert.That(retrievedUser1, Is.Not.Null);
         Assert.That(retrievedUser1.Email, Is.EqualTo(email1));
         Assert.That(retrievedUser1.PasswordHash, Is.EqualTo(passwordHash1));
 
-        var deletedUser = userService.RemoveUser(email1);
+        var deletedUser = userService.TryRemoveUser(email1);
         Assert.That(deletedUser, Is.Not.Null);
         Assert.That(deletedUser.Email, Is.EqualTo(email1));
         Assert.That(deletedUser.PasswordHash, Is.EqualTo(passwordHash1));
@@ -75,9 +75,9 @@ public class UserServiceTests
         userService.AddUser(user1);
         
         var passwordHash2 = passwordHasher.HashPassword(email1, "someNewPassword!2345");
-        userService.EditUser(email1, user => user.PasswordHash = passwordHash2);
+        userService.TryEditUser(email1, user => user.PasswordHash = passwordHash2);
         
-        var retrievedUser1 = userService.GetUser(email1);
+        var retrievedUser1 = userService.TryGetUser(email1);
         Assert.That(retrievedUser1, Is.Not.Null);
         Assert.That(retrievedUser1.Email, Is.EqualTo(email1));
         Assert.That(retrievedUser1.PasswordHash, Is.EqualTo(passwordHash2));
@@ -107,7 +107,7 @@ public class UserServiceTests
         serviceScope = m_factory.Services.CreateScope();
         userService = serviceScope.ServiceProvider.GetRequiredService<IUserService>();
 
-        var retrievedUser1 = userService.GetUser(email1);
+        var retrievedUser1 = userService.TryGetUser(email1);
         Assert.That(retrievedUser1, Is.Not.Null);
         Assert.That(retrievedUser1.Email, Is.EqualTo(email1));
         Assert.That(retrievedUser1.PasswordHash, Is.EqualTo(passwordHash1));
