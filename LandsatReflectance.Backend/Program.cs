@@ -71,7 +71,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<KeysService>();
 builder.Services.AddSingleton<SceneEntityIdCachingService>();
 
-builder.Services.AddScoped<IUserService, FileUserService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITargetService, FileTargetService>();
 
 builder.Services.AddScoped<UsgsApiService>();

@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace LandsatReflectance.Backend.Tests.Services;
 
 [TestFixture]
-public class FileUserServiceTests
+public class UserServiceTests
 {
     private WebApplicationFactory<Program> m_factory = null!;
     

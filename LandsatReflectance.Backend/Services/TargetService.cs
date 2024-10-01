@@ -37,7 +37,7 @@ public class FileTargetService : ITargetService
     private static readonly string JoinTableSaveFilePath = @$"{ExecutingAssemblyDirectory}\Data\usersTargetsJoinTable.json";
     private static readonly string TargetsSaveFilePath = @$"{ExecutingAssemblyDirectory}\Data\targets.json";
     
-    private readonly ILogger<FileUserService> m_logger;
+    private readonly ILogger<UserService> m_logger;
     private readonly JsonSerializerOptions m_jsonSerializerOptions;
     
     private List<JoinTableEntry> m_joinTableEntries = new();
@@ -51,7 +51,7 @@ public class FileTargetService : ITargetService
     }
     
     
-    public FileTargetService(ILogger<FileUserService> logger, IOptions<JsonOptions> jsonOptions)
+    public FileTargetService(ILogger<UserService> logger, IOptions<JsonOptions> jsonOptions)
     {
         m_logger = logger;
         m_jsonSerializerOptions = jsonOptions.Value.SerializerOptions;

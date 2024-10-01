@@ -20,16 +20,16 @@ public interface IUserService
     public void ClearAll();
 }
 
-public class FileUserService : IUserService
+public class UserService : IUserService
 {
     private static readonly string ExecutingAssemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
     private static readonly string SaveFilePath = @$"{ExecutingAssemblyDirectory}\Data\users.json";
     
-    private readonly ILogger<FileUserService> m_logger;
+    private readonly ILogger<UserService> m_logger;
     private readonly JsonSerializerOptions m_jsonSerializerOptions;
     private List<User> m_users = new();
     
-    public FileUserService(ILogger<FileUserService> logger, IOptions<JsonOptions> jsonOptions)
+    public UserService(ILogger<UserService> logger, IOptions<JsonOptions> jsonOptions)
     {
         m_logger = logger;
         m_jsonSerializerOptions = jsonOptions.Value.SerializerOptions;
