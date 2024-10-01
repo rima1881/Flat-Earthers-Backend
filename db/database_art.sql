@@ -38,6 +38,5 @@ CREATE TABLE Targets(
 	posY int NOT NULL, 	-- PATH
 	NotificationOffset DATETIME,
 	CloudCover int,
-	ImgUrl varchar(255) NOT NULL,
 	PRIMARY KEY (TargetID)
 );
