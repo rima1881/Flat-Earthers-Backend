@@ -4,13 +4,10 @@
 
 use master;
 
-
-IF EXISTS(SELECT * FROM master.sys.databases 
-          WHERE name='flatEarhters')
+IF EXISTS (SELECT * FROM sys.databases WHERE name = 'flatEarthers')
 BEGIN
     DROP DATABASE flatEarthers;
 END
-
 
 CREATE DATABASE flatEarthers;
 
@@ -19,7 +16,8 @@ use flatEarthers;
 CREATE TABLE Users(
 	UserID INT IDENTITY(1,1),
 	Email VARCHAR(255) UNIQUE NOT NULL,
-	SendEmail BOOLEAN NOT NULL DEFAULT TRUE,
+	PWD VARCHAR(255),
+	SendEmail BIT NOT NULL DEFAULT '1',
 	PRIMARY KEY (UserID)
 );
 
@@ -37,6 +35,7 @@ CREATE TABLE Targets(
 	posX int NOT NULL, 	-- ROW 
 	posY int NOT NULL, 	-- PATH
 	NotificationOffset DATETIME,
+	Prediction DATETIME,
 	CloudCover int,
 	PRIMARY KEY (TargetID)
 );
