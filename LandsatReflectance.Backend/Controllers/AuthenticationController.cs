@@ -7,11 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 using LandsatReflectance.Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace LandsatReflectance.Backend.Controllers;
 
-
+[Authorize]
 [ApiController]
 [Route("")]
 public class AuthenticationController : ControllerBase

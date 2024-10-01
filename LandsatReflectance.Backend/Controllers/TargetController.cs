@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LandsatReflectance.Backend.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("")]
 public class TargetController : ControllerBase
