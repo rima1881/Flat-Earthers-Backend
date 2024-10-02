@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LandsatReflectance.Backend.Controllers;
 
+#if !DEBUG
 [Authorize]
+#endif
 [ApiController]
 [Route("")]
 public class TargetController : ControllerBase
@@ -29,9 +31,9 @@ public class TargetController : ControllerBase
     }
 
     [HttpPost("AddTargets", Name = "AddTargets")]
-    public IActionResult AddTargets([FromBody] AddTargetsRequest addTargetsRequest)
+    public async Task<IActionResult> AddTargets([FromBody] AddTargetsRequest addTargetsRequest)
     {
-        var user = m_userService.TryGetUser(addTargetsRequest.Email);
+        var user = await m_userService.TryGetUser(addTargetsRequest.Email);
         if (user is null)
         {
             return BadRequest($"Could not find the user with email \"{addTargetsRequest.Email}\".");
@@ -43,9 +45,9 @@ public class TargetController : ControllerBase
 
 
     [HttpGet("GetTargets", Name = "GetTargets")]
-    public IActionResult GetTargets([FromQuery(Name = "email")] string email)
+    public async Task<IActionResult> GetTargets([FromQuery(Name = "email")] string email)
     {
-        var user = m_userService.TryGetUser(email);
+        var user = await m_userService.TryGetUser(email);
         if (user is null)
         {
             return BadRequest($"Could not find the user with email \"{email}\".");
@@ -55,11 +57,11 @@ public class TargetController : ControllerBase
     }
 
     [HttpDelete("DeleteTarget", Name = "DeleteTarget")]
-    public IActionResult DeleteTarget(
+    public async Task<IActionResult> DeleteTarget(
         [FromQuery(Name = "email")] string email, 
         [FromQuery(Name = "guid")] Guid targetGuid)
     {
-        var user = m_userService.TryGetUser(email);
+        var user = await m_userService.TryGetUser(email);
         if (user is null)
         {
             return BadRequest($"Could not find the user with email \"{email}\".");

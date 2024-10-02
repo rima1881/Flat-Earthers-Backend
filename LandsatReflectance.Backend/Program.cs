@@ -33,37 +33,42 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        var authSecretKey = new KeysService().AuthSecretKey;
-        var key = Encoding.UTF8.GetBytes(authSecretKey);
-        
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-            ClockSkew = TimeSpan.Zero
-        };
 
-        options.Events = new JwtBearerEvents
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddAuthentication(options =>
         {
-            OnMessageReceived = msgReceivedContext =>
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            var authSecretKey = new KeysService().AuthSecretKey;
+            var key = Encoding.UTF8.GetBytes(authSecretKey);
+            
+            options.TokenValidationParameters = new TokenValidationParameters
             {
-                msgReceivedContext.Token = msgReceivedContext.Request.Headers["X-Auth-Token"].FirstOrDefault();
-                return Task.CompletedTask;
-            }
-        };
-    });
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ClockSkew = TimeSpan.Zero
+            };
 
-builder.Services.AddAuthorization();
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = msgReceivedContext =>
+                {
+                    msgReceivedContext.Token = msgReceivedContext.Request.Headers["X-Auth-Token"].FirstOrDefault();
+                    return Task.CompletedTask;
+                }
+            };
+        });
+
+    builder.Services.AddAuthorization();
+}
+
 
 builder.Services.AddControllers();
 
@@ -71,7 +76,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<KeysService>();
 builder.Services.AddSingleton<SceneEntityIdCachingService>();
 
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserService, DbUserService>();
 builder.Services.AddScoped<ITargetService, FileTargetService>();
 
 builder.Services.AddScoped<UsgsApiService>();
@@ -87,7 +92,6 @@ if (builder.Environment.IsDevelopment())
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -100,8 +104,11 @@ app.UseMiddleware<DefaultErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
+if (app.Environment.IsDevelopment())
+{
+    app.UseAuthentication();
+    app.UseAuthorization();
+}
 
 app.MapControllers();
 

@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace LandsatReflectance.Backend.Tests.Services;
 
 [TestFixture]
-public class UserServiceTests
+public class FileUserServiceTests
 {
     private WebApplicationFactory<Program> m_factory = null!;
     
@@ -24,7 +24,7 @@ public class UserServiceTests
     }
 
     [Test]
-    public void TestAddGetAndRemoveUser()
+    public async Task TestAddGetAndRemoveUser()
     {
         using var serviceScope = m_factory.Services.CreateScope();
         var userService = serviceScope.ServiceProvider.GetRequiredService<IUserService>();
@@ -41,21 +41,21 @@ public class UserServiceTests
             Email = email1,
             PasswordHash = passwordHash1
         };
-        userService.AddUser(user1);
+        await userService.AddUser(user1);
 
-        var retrievedUser1 = userService.TryGetUser(email1);
+        var retrievedUser1 = await userService.TryGetUser(email1);
         Assert.That(retrievedUser1, Is.Not.Null);
         Assert.That(retrievedUser1.Email, Is.EqualTo(email1));
         Assert.That(retrievedUser1.PasswordHash, Is.EqualTo(passwordHash1));
 
-        var deletedUser = userService.TryRemoveUser(email1);
+        var deletedUser = await userService.TryRemoveUser(email1);
         Assert.That(deletedUser, Is.Not.Null);
         Assert.That(deletedUser.Email, Is.EqualTo(email1));
         Assert.That(deletedUser.PasswordHash, Is.EqualTo(passwordHash1));
     }
     
     [Test]
-    public void TestEditUser()
+    public async Task TestEditUser()
     {
         using var serviceScope = m_factory.Services.CreateScope();
         var userService = serviceScope.ServiceProvider.GetRequiredService<IUserService>();
@@ -72,19 +72,19 @@ public class UserServiceTests
             Email = email1,
             PasswordHash = passwordHash1
         };
-        userService.AddUser(user1);
+        await userService.AddUser(user1);
         
         var passwordHash2 = passwordHasher.HashPassword(email1, "someNewPassword!2345");
-        userService.TryEditUser(email1, user => user.PasswordHash = passwordHash2);
+        await userService.TryEditUser(email1, user => user.PasswordHash = passwordHash2);
         
-        var retrievedUser1 = userService.TryGetUser(email1);
+        var retrievedUser1 = await userService.TryGetUser(email1);
         Assert.That(retrievedUser1, Is.Not.Null);
         Assert.That(retrievedUser1.Email, Is.EqualTo(email1));
         Assert.That(retrievedUser1.PasswordHash, Is.EqualTo(passwordHash2));
     }
     
     [Test]
-    public void TestDifferentScopes()
+    public async Task TestDifferentScopes()
     {
         var serviceScope = m_factory.Services.CreateScope();
         var userService = serviceScope.ServiceProvider.GetRequiredService<IUserService>();
@@ -101,13 +101,13 @@ public class UserServiceTests
             Email = email1,
             PasswordHash = passwordHash1
         };
-        userService.AddUser(user1);
+        await userService.AddUser(user1);
         
         serviceScope.Dispose();
         serviceScope = m_factory.Services.CreateScope();
         userService = serviceScope.ServiceProvider.GetRequiredService<IUserService>();
 
-        var retrievedUser1 = userService.TryGetUser(email1);
+        var retrievedUser1 = await userService.TryGetUser(email1);
         Assert.That(retrievedUser1, Is.Not.Null);
         Assert.That(retrievedUser1.Email, Is.EqualTo(email1));
         Assert.That(retrievedUser1.PasswordHash, Is.EqualTo(passwordHash1));
