@@ -1,9 +1,11 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using LandsatReflectance.Backend.Models;
-using Microsoft.AspNetCore.Http.Json;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
+using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
 namespace LandsatReflectance.Backend.Services;
 
@@ -104,101 +106,146 @@ public class FileUserService : IUserService
 
 public class DbUserService : IUserService
 {
-    private readonly ILogger<DbUserService> m_logger;
-    private readonly string m_dbConnectionString;
-    
-    public DbUserService(ILogger<DbUserService> logger, KeysService keysService)
+    public class UserDbContext : DbContext
     {
-        m_logger = logger;
-        m_dbConnectionString = keysService.DbConnectionString;
+        public DbSet<User> Users { get; set; }
+        
+        
+        public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
+        { }
+        
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().ToTable("Users");
+
+            modelBuilder.Entity<User>().HasKey(user => user.Guid);
+                
+            modelBuilder.Entity<User>()
+                .Property(user => user.Guid)
+                .HasColumnName("UserGuid")
+                .IsRequired();
+
+            modelBuilder.Entity<User>()
+                .Property(user => user.Email)
+                .HasColumnName("Email")
+                .IsRequired();
+            
+            modelBuilder.Entity<User>()
+                .Property(user => user.PasswordHash)
+                .HasColumnName("PasswordHash")
+                .IsRequired();
+            
+            modelBuilder.Entity<User>()
+                .Property(user => user.IsEmailEnabled)
+                .HasColumnName("EmailEnabled")
+                .IsRequired();
+        }
     }
     
-    public async Task AddUser(User user)
+    private readonly ILogger<DbUserService> m_logger;
+    private readonly UserDbContext m_userDbContext;
+    
+    public DbUserService(ILogger<DbUserService> logger, UserDbContext userDbContext)
     {
-        string insertCommandRaw = "INSERT INTO Users (UserGuid, Email, PasswordHash, EmailEnabled) VALUES (@UserGuid, @Email, @PasswordHash, @EmailEnabled)";
+        m_logger = logger;
+        m_userDbContext = userDbContext;
+    }
+    
+    public Task AddUser(User user)
+    {
+        using var transaction = m_userDbContext.Database.BeginTransaction();
 
-        await using var sqlConnection = new MySqlConnection(m_dbConnectionString);
-        await sqlConnection.OpenAsync();
-
-        var transaction = await sqlConnection.BeginTransactionAsync();
-        
         try
         {
-            await using var insertCommand = new MySqlCommand(insertCommandRaw, sqlConnection);
-            _ = insertCommand.Parameters.AddWithValue("@UserGuid", user.Guid);
-            _ = insertCommand.Parameters.AddWithValue("@Email", user.Email);
-            _ = insertCommand.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
-            _ = insertCommand.Parameters.AddWithValue("@EmailEnabled", user.IsEmailEnabled ? 1 : 0);
-            
-            m_logger.LogInformation($"Attempting to write \"{user.ToLogString()}\" to the db.");
-            _ = await insertCommand.ExecuteNonQueryAsync();
-            await transaction.CommitAsync();
-            m_logger.LogInformation($"Successfully wrote \"{user.ToLogString()}\" to the db.");
+            m_logger.LogInformation($"Attempting to add \"{user.ToLogString()}\" to the database.");
+            _ = m_userDbContext.Users.Add(user);
+            _ = m_userDbContext.SaveChanges();
+
+            transaction.Commit();
         }
         catch (Exception exception)
         {
-            m_logger.LogError($"Failed to write \"{user.ToLogString()}\" to the db, with the exception message \"{exception.Message}\". Attempting to rollback.");
+            m_logger.LogError($"Failed to add \"{user.ToLogString()}\", with error message: \"{exception.Message}\". Rolling back transaction.");
             try
             {
-                await transaction.RollbackAsync();
+                transaction.Rollback();
             }
             catch (Exception rollbackException)
             {
-                m_logger.LogCritical($"Failed to rollback the insertion of \"{user.ToLogString()}\" with exception message \"{rollbackException.Message}\"");
+                m_logger.LogCritical($"Failed to rollback transaction with error message \"{rollbackException.Message}\"");
             }
         }
+        
+        return Task.CompletedTask;
     }
 
     public Task<User?> TryEditUser(string email, Action<User> mapUser)
     {
-        throw new NotImplementedException();
-    }
-
-    public async Task<User?> TryGetUser(string email)
-    {
-        string insertCommandRaw = "SELECT * FROM Users WHERE Email = @Email";
-
-        await using var sqlConnection = new MySqlConnection(m_dbConnectionString);
-        await sqlConnection.OpenAsync();
+        using var transaction = m_userDbContext.Database.BeginTransaction();
 
         try
         {
-            await using var insertCommand = new MySqlCommand(insertCommandRaw, sqlConnection);
-            _ = insertCommand.Parameters.AddWithValue("@Email", email);
-            
-            m_logger.LogInformation($"Attempting to fetch user with email \"{email}\".");
-            var dbDataReader  = await insertCommand.ExecuteReaderAsync();
+            var users = m_userDbContext.Users.Where(user => user.Email == email);
 
-            User? userToReturn = null;
-            while (await dbDataReader.ReadAsync())
+            if (users.Count() > 1)
             {
-                if (userToReturn is not null)
-                {
-                    m_logger.LogCritical($"Fetching \"{email}\" resulted in more than one user being returned.");
-                    return null;
-                }
-
-                userToReturn = new User
-                {
-                    Guid = (Guid)dbDataReader["UserGuid"],
-                    Email = (string)dbDataReader["Email"],
-                    PasswordHash = (string)dbDataReader["PasswordHash"],
-                    IsEmailEnabled = (bool)dbDataReader["EmailEnabled"]
-                };
+                m_logger.LogCritical($"There were multiple users with email \"{email}\" were found.");
+                return Task.FromResult<User?>(null);
             }
 
-            var logInfoMsg = userToReturn is null
-                ? $"No user with the email \"{email}\" found."
-                : $"Found the user with the email \"{email}\".";
+            var user = users.FirstOrDefault();
             
-            m_logger.LogInformation(logInfoMsg);
-            return userToReturn;
+            if (user is null)
+            {
+                return Task.FromResult<User?>(null);
+            }
+            
+            m_logger.LogInformation($"Attempting to modify \"{user.ToLogString()}\".");
+
+            var oldUserGuid = user.Guid;
+            mapUser(user);
+
+            if (oldUserGuid != user.Guid)
+            {
+                m_logger.LogError("Attempted to modify the user's GUID, this is not permitted.");
+                return Task.FromResult<User?>(null);
+            }
+            
+            _ = m_userDbContext.SaveChanges();
+
+            transaction.Commit();
+
+            return Task.FromResult<User?>(user);
         }
         catch (Exception exception)
         {
-            m_logger.LogError($"Failed fetching the user with email \"{email}\", with exception message {exception.Message}.");
-            return null;
+            m_logger.LogError($"Failed to modify the user with email \"{email}\", with error message: \"{exception.Message}\". Rolling back transaction.");
+            try
+            {
+                transaction.Rollback();
+            }
+            catch (Exception rollbackException)
+            {
+                m_logger.LogCritical($"Failed to rollback transaction with error message \"{rollbackException.Message}\"");
+            }
         }
+        
+        return Task.FromResult<User?>(null);
+    }
+
+    public Task<User?> TryGetUser(string email)
+    {
+        var users = m_userDbContext.Users
+            .AsNoTracking()
+            .Where(user => user.Email == email);
+
+        if (users.Count() > 1)
+        {
+            m_logger.LogCritical($"There were multiple users with email \"{email}\" were found.");
+        }
+
+        return Task.FromResult(users.FirstOrDefault());
     }
 
     public Task<User?> TryRemoveUser(string email)

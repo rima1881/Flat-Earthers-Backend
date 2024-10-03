@@ -8,6 +8,7 @@ using LandsatReflectance.Backend.Services;
 using LandsatReflectance.Backend.Utils;
 using LandsatReflectance.Backend.Utils.SourceGenerators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 
@@ -71,6 +72,10 @@ if (builder.Environment.IsDevelopment())
 
 
 builder.Services.AddControllers();
+
+var keysService = new KeysService();
+builder.Services.AddDbContext<DbUserService.UserDbContext>(options =>
+    options.UseMySql(keysService.DbConnectionString, ServerVersion.AutoDetect(keysService.DbConnectionString)));
 
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<KeysService>();
