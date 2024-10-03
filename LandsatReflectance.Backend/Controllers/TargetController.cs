@@ -1,6 +1,5 @@
 ﻿using LandsatReflectance.Backend.Models;
 using LandsatReflectance.Backend.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LandsatReflectance.Backend.Controllers;
@@ -67,9 +66,11 @@ public class TargetController : ControllerBase
             return BadRequest($"Could not find the user with email \"{email}\".");
         }
         
-        var removedTarget = m_targetsService.TryRemoveTarget(target => target.Guid == targetGuid, guid => user.Guid == guid);
+        var removedTarget = m_targetsService
+            .TryRemoveTarget(target => target.Guid == targetGuid, guid => user.Guid == guid)
+            .ToList();
         
-        if (removedTarget is null)
+        if (removedTarget.Count == 0)
         {
             return BadRequest($"Could not remove the target with id \"{targetGuid}\" bound to user \"{email}\".");
         }

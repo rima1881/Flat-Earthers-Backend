@@ -79,12 +79,16 @@ var keysService = new KeysService();
 builder.Services.AddDbContext<DbUserService.UserDbContext>(options =>
     options.UseMySql(keysService.DbConnectionString, ServerVersion.AutoDetect(keysService.DbConnectionString)));
 
+builder.Services.AddDbContext<DbTargetService.TargetDbContext>(options =>
+    options.UseMySql(keysService.DbConnectionString, ServerVersion.AutoDetect(keysService.DbConnectionString)));
+
+
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<KeysService>();
 builder.Services.AddSingleton<SceneEntityIdCachingService>();
 
 builder.Services.AddScoped<IUserService, DbUserService>();
-builder.Services.AddScoped<ITargetService, FileTargetService>();
+builder.Services.AddScoped<ITargetService, DbTargetService>();
 
 builder.Services.AddScoped<UsgsApiService>();
 
@@ -99,18 +103,16 @@ builder.Services.AddCors();
 
 
 
-
 var app = builder.Build();
-
-app.UseCors(x => x
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .SetIsOriginAllowed(origin => true) // allow any origin
-                    //.WithOrigins("https://localhost:44351")); // Allow only this origin can also have multiple origins separated with comma
-                    .AllowCredentials()); // allow credentials
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseCors(x => x
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .SetIsOriginAllowed(_ => true)
+        .AllowCredentials());
+    
     app.UseDeveloperExceptionPage();
     
     app.UseSwagger();

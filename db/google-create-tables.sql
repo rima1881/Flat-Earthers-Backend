@@ -16,10 +16,10 @@ CREATE TABLE Targets (
     TargetGuid CHAR(36) PRIMARY KEY,
     ScenePath INT NOT NULL,
     SceneRow INT NOT NULL,
-    Latitude INT NOT NULL,
-    Longitude INT NOT NULL,
-    MinCloudCover DECIMAL(10, 2) NULL,
-    MaxCloudCover DECIMAL(10, 2) NULL,
+    Latitude DECIMAL(10, 7) NOT NULL,
+    Longitude DECIMAL(10, 7) NOT NULL, 
+    MinCloudCover DECIMAL(7, 5) NULL,
+    MaxCloudCover DECIMAL(7,5) NULL,
     NotificationOffset DATETIME NOT NULL
 );
 

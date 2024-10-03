@@ -12,4 +12,9 @@ public class Target
     public double? MaxCloudCover { get; set; } = 1;
     
     public TimeSpan NotificationOffset { get; set; } = TimeSpan.Zero;
+
+    public string ToLogString() => $"Target: ({Guid}, {Path}, {Row}, {Latitude}, {Longitude}, " +
+                                   $"{(MinCloudCover != null ? MinCloudCover.Value : "")}, " +
+                                   $"{(MaxCloudCover != null ? MaxCloudCover.Value : "")}, " +
+                                   $"{NotificationOffset})";
 }
