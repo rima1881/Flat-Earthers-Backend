@@ -26,6 +26,8 @@ public interface ITargetService
     public IEnumerable<Target> TryRemoveTarget(
         Expression<Func<Target, bool>> targetPredicate, 
         Expression<Func<Guid, bool>>? userGuidPredicate = null);
+
+    public IEnumerable<(Guid, IEnumerable<Target>)> GetLinkedUsers(Expression<Func<Target, bool>> targetPredicate);
     
     [Obsolete("Use this method with care. Only meant for testing.")]
     public void ClearAll();
@@ -123,6 +125,11 @@ public class FileTargetService : ITargetService
         File.WriteAllText(JoinTableSaveFilePath, JsonSerializer.Serialize(m_joinTableEntries, m_jsonSerializerOptions));
         File.WriteAllText(TargetsSaveFilePath, JsonSerializer.Serialize(m_targets, m_jsonSerializerOptions));
         return targetsToDelete;
+    }
+
+    public IEnumerable<(Guid, IEnumerable<Target>)> GetLinkedUsers(Expression<Func<Target, bool>> targetPredicate)
+    {
+        throw new NotImplementedException();
     }
 
 
@@ -344,6 +351,32 @@ public class DbTargetService : ITargetService
         }
 
         return [];
+    }
+
+    public IEnumerable<(Guid, IEnumerable<Target>)> GetLinkedUsers(Expression<Func<Target, bool>> targetPredicate)
+    {
+        // TODO: Refactor this
+        var targets = GetTargets(targetPredicate).ToList();
+        
+        var userGuidWithTargets = m_targetDbContext.UserTargets.AsNoTracking()
+            .GroupBy(ut => ut.UserGuid)
+            .ToList();
+
+        var listToReturn = new List<(Guid, IEnumerable<Target>)>();
+        foreach (var grouping in userGuidWithTargets)
+        {
+            var userGuid = grouping.Key;
+            var targetGuids = grouping.Select(ut => ut.TargetGuid);
+
+            var linkedTargets = targets.Where(target => targetGuids.Any(guid => guid == target.Guid)).ToList();
+
+            if (linkedTargets.Any())
+            {
+                listToReturn.Add((userGuid, linkedTargets));
+            }
+        }
+
+        return listToReturn;
     }
 
     public void ClearAll()

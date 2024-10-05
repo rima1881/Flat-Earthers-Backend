@@ -4,6 +4,7 @@ DROP TABLE
     `flatearthers-main`.`Users`,
     `flatearthers-main`.`Targets`,
     `flatearthers-main`.`UsersTargets`;
+    `flatearthers-main`.`Predictions`;
 
 CREATE TABLE Users (
     UserGuid CHAR(36) PRIMARY KEY,
@@ -29,4 +30,11 @@ CREATE TABLE UsersTargets (
     CONSTRAINT FK_UsersTargets_Users FOREIGN KEY (UserGuid) REFERENCES Users(UserGuid),
     CONSTRAINT FK_UsersTargets_Targets FOREIGN KEY (TargetGuid) REFERENCES Targets(TargetGuid),
     PRIMARY KEY (UserGuid, TargetGuid)
+);
+
+CREATE TABLE Predictions (
+    ScenePath INT NOT NULL,
+    SceneRow INT NOT NULL,
+    PasswordHash JSON,
+    PRIMARY KEY (ScenePath, SceneRow)
 );

@@ -22,8 +22,6 @@ namespace LandsatReflectance.Backend.Controllers;
 [SwaggerTag("This controller manages interactions with the USGS m2m API.")]
 public class UsgsController : ControllerBase
 {
-    private const string DatasetName = "landsat_ot_c2_l2";
-    
     private readonly UsgsApiService m_usgsApiService;
     private readonly SceneEntityIdCachingService m_sceneEntityIdCachingService;
     private readonly JsonSerializerOptions m_jsonSerializerOptions;
@@ -79,7 +77,7 @@ public class UsgsController : ControllerBase
         var sceneListGetRequest = new SceneListGetRequest
         {
             ListId = SceneEntityIdCachingService.PathAndRowToCacheKey(path, row),
-            DatasetName = DatasetName,
+            DatasetName = UsgsApiService.DatasetName,
             StartingNumber = 0,
             MaxResults = 1000,
         };
@@ -102,7 +100,7 @@ public class UsgsController : ControllerBase
         var sceneListAddRequest = new SceneListAddRequest
         {
             ListId = SceneEntityIdCachingService.PathAndRowToCacheKey(path, row),
-            DatasetName = DatasetName,
+            DatasetName = UsgsApiService.DatasetName,
             IdField = "entityId",
             EntityIds = entityIds,
             TimeToLive = "P1M", // Stored for a month
@@ -151,7 +149,7 @@ public class UsgsController : ControllerBase
         
         return new SceneSearchRequest
         {
-            DatasetName = DatasetName,
+            DatasetName = UsgsApiService.DatasetName,
             MaxResults = numResults,
             UseCustomization = false,
             SceneFilter = sceneFilter,

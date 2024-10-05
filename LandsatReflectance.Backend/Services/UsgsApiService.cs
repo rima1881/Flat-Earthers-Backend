@@ -11,6 +11,8 @@ namespace LandsatReflectance.Backend.Services;
 
 public class UsgsApiService
 {
+    public static readonly string DatasetName = "landsat_ot_c2_l2";
+    
     private readonly string m_username;
     private readonly string m_usgsToken;
 
@@ -26,6 +28,8 @@ public class UsgsApiService
         m_httpClient = new HttpClient();
         m_httpClient.BaseAddress = new Uri("https://m2m.cr.usgs.gov/api/api/json/stable/");
 
+        
+        // m_httpClient.DefaultRequestHeaders.Add("X-Auth-Token", "eyJjaWQiOjI3MjY5MjU0LCJzIjoiMTcyODEwMDg1NiIsInIiOjE1NCwicCI6WyJ1c2VyIl19");
         var loginTokenRequest = new LoginTokenRequest
         {
             Username = m_username,

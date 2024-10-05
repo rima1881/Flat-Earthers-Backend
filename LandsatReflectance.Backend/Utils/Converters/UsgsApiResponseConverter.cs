@@ -58,7 +58,7 @@ public class UsgsApiResponseConverter<T> : JsonConverter<UsgsApiResponse<T>> whe
                 break;
             case "errorCode":
                 usgsApiResponse.ErrorCode = reader.TokenType is not JsonTokenType.Null 
-                    ? reader.GetInt32() 
+                    ? reader.GetString() 
                     : null;
                 break;
             case "errorMessage":
@@ -139,7 +139,7 @@ public class UsgsApiResponseConverter<T> : JsonConverter<UsgsApiResponse<T>> whe
         if (value.ErrorCode is null)
             writer.WriteNull("errorCode");
         else
-            writer.WriteNumber("errorCode", value.ErrorCode.Value);
+            writer.WriteString("errorCode", value.ErrorCode);
         
         if (value.ErrorMessage is null)
             writer.WriteNull("errorMessage");
