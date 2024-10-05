@@ -12,7 +12,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace LandsatReflectance.Backend.Controllers;
 
+#if !DEBUG
 [Authorize]
+#endif
 [ApiController]
 [Route("")]
 public class AuthenticationController : ControllerBase

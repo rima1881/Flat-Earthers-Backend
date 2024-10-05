@@ -34,42 +34,39 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 
-
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.AddAuthentication(options =>
+#if !DEBUG
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        var authSecretKey = new KeysService().AuthSecretKey;
+        var key = Encoding.UTF8.GetBytes(authSecretKey);
+        
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(options =>
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ClockSkew = TimeSpan.Zero
+        };
+
+        options.Events = new JwtBearerEvents
         {
-            var authSecretKey = new KeysService().AuthSecretKey;
-            var key = Encoding.UTF8.GetBytes(authSecretKey);
-            
-            options.TokenValidationParameters = new TokenValidationParameters
+            OnMessageReceived = msgReceivedContext =>
             {
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ClockSkew = TimeSpan.Zero
-            };
+                msgReceivedContext.Token = msgReceivedContext.Request.Headers["X-Auth-Token"].FirstOrDefault();
+                return Task.CompletedTask;
+            }
+        };
+    });
 
-            options.Events = new JwtBearerEvents
-            {
-                OnMessageReceived = msgReceivedContext =>
-                {
-                    msgReceivedContext.Token = msgReceivedContext.Request.Headers["X-Auth-Token"].FirstOrDefault();
-                    return Task.CompletedTask;
-                }
-            };
-        });
-
-    builder.Services.AddAuthorization();
-}
-
+builder.Services.AddAuthorization();
+#endif
 
 
 
@@ -105,19 +102,21 @@ builder.Services.AddCors();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseCors(x => x
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .SetIsOriginAllowed(_ => true)
-        .AllowCredentials());
-    
-    app.UseDeveloperExceptionPage();
-    
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+// Add specific CORS config for release / production
+
+#if DEBUG
+app.UseCors(x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(_ => true)
+    .AllowCredentials());
+#endif
+
+app.UseDeveloperExceptionPage();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseMiddleware<DefaultErrorHandlingMiddleware>();
 
