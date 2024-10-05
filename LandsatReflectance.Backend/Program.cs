@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using LandsatReflectance.Backend.Middleware;
 using LandsatReflectance.Backend.Models.UsgsApi.Endpoints;
 using LandsatReflectance.Backend.Services;
+using LandsatReflectance.Backend.Services.BackgroundServices;
 using LandsatReflectance.Backend.Utils;
 using LandsatReflectance.Backend.Utils.SourceGenerators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -89,6 +90,8 @@ builder.Services.AddScoped<ITargetService, DbTargetService>();
 
 builder.Services.AddScoped<UsgsApiService>();
 
+builder.Services.AddHostedService<NotificationService>();
+
 
 if (builder.Environment.IsDevelopment())
 {
@@ -104,7 +107,6 @@ var app = builder.Build();
 
 
 // Add specific CORS config for release / production
-
 #if DEBUG
 app.UseCors(x => x
     .AllowAnyMethod()
