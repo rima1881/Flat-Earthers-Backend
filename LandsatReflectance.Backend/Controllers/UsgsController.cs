@@ -45,57 +45,10 @@ public class UsgsController : ControllerBase
         [FromQuery(Name = "row")] int row,
         [FromQuery(Name = "numResults")] int numResults = 5)
     {
-        var addToCache = false;
-        var entityIds = m_sceneEntityIdCachingService.GetSceneEntityIds(path, row);
+        var sceneDataArr = await PerformSceneSearch(path, row, numResults);
+        if (sceneDataArr is null)
+            return BadRequest();
 
-        // Query 'scene-list-get'
-        if (entityIds is null)
-        {
-            entityIds = await TryGetEntityIdListFromOnlineSave(path, row);
-            addToCache = true;
-        }
-
-
-        SceneData[] sceneDataArr;
-
-        if (entityIds is null)
-        {
-            var sceneDataArrNullable = await PerformSceneSearch(path, row, numResults);
-            if (sceneDataArrNullable is null)
-                return BadRequest();
-
-            sceneDataArr = sceneDataArrNullable; 
-            entityIds = sceneDataArr.Select(sceneData => sceneData.EntityId).ToArray();
-
-            var (isUnsuccessful, errorMsg) = await TryWriteToOnlineSave(path, row, entityIds);
-            if (isUnsuccessful)
-                return BadRequest(errorMsg);
-            
-            addToCache = true;
-        }
-        else
-        {
-            var sceneMetadataListRequest = new SceneMetadataListRequest
-            {
-                DatasetName = DatasetName,
-                ListId = SceneEntityIdCachingService.PathAndRowToCacheKey(path, row),
-                MetadataType = "full",
-                IncludeNullMetadataValues = true
-            };
-            var sceneMetadataListResponse = await m_usgsApiService.QuerySceneMetadataList(sceneMetadataListRequest);
-
-            var sceneMetadataListData = sceneMetadataListResponse.Data;
-            if (sceneMetadataListData is null)
-                return BadRequest();
-
-            sceneDataArr = sceneMetadataListData.ReturnedSceneData;
-        }
-
-
-        if (addToCache)
-            m_sceneEntityIdCachingService.AddSceneEntityIds(path, row, entityIds);
-
-        // We want to return simplified scene data
         var jsonSerializerOptions = jsonOptions.Value.SerializerOptions;
         jsonSerializerOptions.Converters.Insert(0, new SceneDataSimplifiedConverter());
 
