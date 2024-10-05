@@ -1,0 +1,6 @@
+@LandsatReflectance.Backend_HostAddress = http://localhost:5029
+
+GET {{LandsatReflectance.Backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
