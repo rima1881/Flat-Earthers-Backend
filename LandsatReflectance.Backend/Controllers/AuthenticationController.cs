@@ -65,6 +65,17 @@ public class AuthenticationController : ControllerBase
     [HttpPost("Register", Name = "Register")]
     public IActionResult RegisterUser([FromBody] RegisterUserRequest registerUserRequest)
     {
+        if (!IsEmailValid(registerUserRequest.Email))
+        {
+            return BadRequest($"The email \"{registerUserRequest.Email}\" is not valid.");
+        }
+        
+        if (!IsPasswordValid(registerUserRequest.Password))
+        {
+            return BadRequest($"The password \"{registerUserRequest.Password}\" is not valid." +
+                              $"\n - The password should be at least 8 characters long.");
+        }
+        
         var user = new User
         {
             Email = registerUserRequest.Email,
@@ -112,5 +123,29 @@ public class AuthenticationController : ControllerBase
         }
 
         return jwtToken;
+    }
+
+    // see 'https://stackoverflow.com/questions/1365407/c-sharp-code-to-validate-email-address'
+    private static bool IsEmailValid(string email)
+    {
+        var trimmedEmail = email.Trim();
+
+        if (trimmedEmail.EndsWith("."))
+            return false;
+
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email);
+            return addr.Address == trimmedEmail;
+        }
+        catch
+        {
+            return false;
+        }    
+    }
+
+    private static bool IsPasswordValid(string password)
+    {
+        return password.Length >= 8;
     }
 }
