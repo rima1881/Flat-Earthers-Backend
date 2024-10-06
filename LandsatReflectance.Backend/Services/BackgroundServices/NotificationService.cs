@@ -1,20 +1,22 @@
-﻿using System.Reflection;
-using System.Text.Json;
+﻿using System.Text.Json;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Http.Json;
+using LandsatReflectance.Backend.Models;
 using LandsatReflectance.Backend.Models.UsgsApi;
 using LandsatReflectance.Backend.Models.UsgsApi.Endpoints;
 using LandsatReflectance.Backend.Models.UsgsApi.Types;
 using LandsatReflectance.Backend.Models.UsgsApi.Types.Request;
 using LandsatReflectance.Backend.Services.NotificationSender;
-using Microsoft.AspNetCore.Http.Json;
-using Microsoft.Extensions.Options;
 using PredictionService = LandsatReflectance.Backend.Services.UsgsDateTimePredictionService;
 using PredictionResults = LandsatReflectance.Backend.Services.UsgsDateTimePredictionService.PredictionResults;
 
+
 namespace LandsatReflectance.Backend.Services.BackgroundServices;
+
 
 public class NotificationService : BackgroundService
 {
-    private readonly TimeSpan m_checkInterval = TimeSpan.FromMinutes(10);
+    private readonly TimeSpan m_checkInterval = TimeSpan.FromMinutes(15);
     private readonly TimeSpan m_maxNotificationOffset = TimeSpan.FromDays(1);
 
     private readonly IServiceScopeFactory m_serviceScopeFactory;
@@ -32,17 +34,14 @@ public class NotificationService : BackgroundService
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        /*
         while (!stoppingToken.IsCancellationRequested)
         {
+            await PerformChecks(stoppingToken);
+            await Task.Delay(m_checkInterval, stoppingToken);
         }
-         */
-        
-        await Perform();
-        await Task.Delay(m_checkInterval, stoppingToken);
     }
 
-    private async Task Perform()
+    private async Task PerformChecks(CancellationToken stoppingToken)
     {
         using var serviceScope = m_serviceScopeFactory.CreateScope();
         var usgsApiService = serviceScope.ServiceProvider.GetRequiredService<UsgsApiService>();
@@ -56,25 +55,25 @@ public class NotificationService : BackgroundService
             int path = 13;
             int row = 28;
             
+            if (stoppingToken.IsCancellationRequested)
+            {
+                return;
+            }
+            
             m_logger.LogInformation($"Examining path & row: {path}, {row}.");
 
+            
             const int numResults = 10;
             var sceneSearchRequest = CreateSceneSearchRequest(path, row, numResults);
 
             var sceneSearchResponse = await usgsApiService.QuerySceneSearch(sceneSearchRequest);
             if (sceneSearchResponse.Data is null)
             {
-                m_logger.LogError($"The query for path {path} and row {row} returned no values.");
+                m_logger.LogError($"The query for path {path} and row {row} returned a null value.");
                 continue;
             }
 
             var scenes = sceneSearchResponse.Data.ReturnedSceneData;
-            if (scenes.Length < numResults)
-            {
-                m_logger.LogError($"Skipped path & row: {path}, {row}. Returned {scenes.Length} < {numResults}.");
-                continue;
-            }
-
             var (predictionResults, errorMsg) = CalculatePrediction(path, row, numResults, scenes);
             if (predictionResults is null || !string.IsNullOrWhiteSpace(errorMsg))
             {
@@ -83,74 +82,83 @@ public class NotificationService : BackgroundService
             }
             
             var predictedAcquisitionDateTimespan = predictionResults.PredictedAcquisitionDate - DateTime.Now;
-
-            if (predictedAcquisitionDateTimespan.Ticks < 0)
+            if (predictedAcquisitionDateTimespan.Ticks < 0)  
             {
+                // If we're past the predicted acquisition date.
+                // Because the next entry for the path & row could come (much) later.
                 return;
             }
             
             if (predictedAcquisitionDateTimespan < m_maxNotificationOffset)
             {
-                m_logger.LogInformation($"Path, Row ({path}, {row}) detected to be under the max notification offset.");
-
-                var userGuidsAndTargets = targetsService
-                    .GetPathAndRowData(path, row)
-                    .ToList();
-
-                foreach (var tuple in userGuidsAndTargets)
-                {
-                    var userGuid = tuple.Item1;
-                    var userInfo = await usersService.TryGetUserByGuid(userGuid);
-
-                    if (userInfo is null)
-                    {
-                        m_logger.LogError($"Couldn't find user with guid \"{userGuid}\"");
-                        continue;
-                    }
-
-                    foreach (var target in tuple.Item2)
-                    {
-                        if (predictedAcquisitionDateTimespan > target.NotificationOffset)
-                        {
-                            continue;
-                        }
-                        
-                        var notificationRecord = userTargetNotificationService.GetNotificationRecord(path, row, userGuid, target.Guid, predictionResults.PredictedAcquisitionDate);
-                        if (notificationRecord is null)
-                        {
-                            continue;
-                        }
-
-                        if (notificationRecord.HasBeenNotified)
-                        {
-                            continue;
-                        }
-
-                        m_logger.LogInformation(
-                            $"User \"{userInfo.Email}\" ({userInfo.Guid}) for target \"{target.Guid}\" " +
-                            $"(path, row: {target.Path}, {target.Row}) will be notified.");
-
-                        foreach (var notificationSenderService in notificationSenderServices)
-                        {
-                            notificationSenderService.SendNotification(userInfo, target);
-                        }
-                        
-                        _ = userTargetNotificationService.SetNotificationStatus(path, row, userGuid, target.Guid, predictionResults.PredictedAcquisitionDate, true);
-                    }
-                }
+                await NotifyUsers(path, row, predictionResults, targetsService, usersService, notificationSenderServices, userTargetNotificationService);
             }
         }
     }
 
+    private async Task NotifyUsers(int path, int row, PredictionResults predictionResults,
+        ITargetService targetsService, 
+        IUserService usersService,
+        List<INotificationSenderService> notificationSenderServices,
+        DbUserTargetNotificationService userTargetNotificationService)
+    {
+        using var loggerScope = m_logger.BeginScope($"User notifications for path, row {path}, {row}.");
+        m_logger.LogInformation($"Path, Row ({path}, {row}) detected to be under the max notification offset.");
+
+        var predictedAcquisitionDateTimespan = predictionResults.PredictedAcquisitionDate - DateTime.Now;
+        var userGuidsAndTargets = targetsService.GetPathAndRowData(path, row).ToList();
+
+        foreach ((Guid userGuid, IEnumerable<Target> targets) in userGuidsAndTargets)
+        {
+            var userInfo = await usersService.TryGetUserByGuid(userGuid);
+
+            if (userInfo is null)
+            {
+                m_logger.LogError($"Couldn't find user with guid \"{userGuid}\"");
+                continue;
+            }
+
+            foreach (var target in targets)
+            {
+                if (predictedAcquisitionDateTimespan > target.NotificationOffset)
+                {
+                    continue;
+                }
+                
+                var notificationRecord = userTargetNotificationService.GetNotificationRecord(path, row, userGuid, target.Guid, predictionResults.PredictedAcquisitionDate);
+                if (notificationRecord is null || notificationRecord.HasBeenNotified)
+                {
+                    continue;
+                }
+
+                m_logger.LogInformation($"User \"{userInfo.Email}\" ({userInfo.Guid}) for target \"{target.Guid}\" " +
+                                        $"(path, row: {target.Path}, {target.Row}) will be notified.");
+
+                foreach (var notificationSenderService in notificationSenderServices)
+                {
+                    notificationSenderService.SendNotification(userInfo, target);
+                }
+                
+                _ = userTargetNotificationService.SetNotificationStatus(path, row, userGuid, target.Guid, predictionResults.PredictedAcquisitionDate, true);
+            }
+        }
+    }
 
     private static (PredictionResults?, string errorMsg) CalculatePrediction(int path, int row, int numResults, SceneData[] scenes)
     {
+        if (scenes.Length < numResults)
+        {
+            string errorMsg = $"Skipped path & row: {path}, {row}. Returned {scenes.Length} < {numResults}.";
+            return (null, errorMsg);
+        }
 
-        var sat8DateInfos = scenes.Where(scene =>
-            {
-                var satelliteMetadata = MetadataExtensions.TryGetMetadataByName(scene.Metadata, "Satellite");
-                return satelliteMetadata is not null && int.Parse(satelliteMetadata.Value) == 8;
-            })
+        var getSatelliteFilter = (int satelliteNumber) => (SceneData sceneData) =>
+        {
+            var satelliteMetadata = MetadataExtensions.TryGetMetadataByName(sceneData.Metadata, "Satellite");
+            return satelliteMetadata is not null && int.Parse(satelliteMetadata.Value) == satelliteNumber;
+        };
+
+        var sat8DateInfos = scenes.Where(getSatelliteFilter(8))
             .Select(PredictionService.ToSceneDateInfo)
             .ToArray();
 
@@ -160,11 +168,7 @@ public class NotificationService : BackgroundService
             return (null, errorMsg);
         }
 
-        var sat9DateInfos = scenes.Where(scene =>
-            {
-                var satelliteMetadata = MetadataExtensions.TryGetMetadataByName(scene.Metadata, "Satellite");
-                return satelliteMetadata is not null && int.Parse(satelliteMetadata.Value) == 9;
-            })
+        var sat9DateInfos = scenes.Where(getSatelliteFilter(9))
             .Select(PredictionService.ToSceneDateInfo)
             .ToArray();
 
@@ -177,7 +181,6 @@ public class NotificationService : BackgroundService
         var predictionResults = PredictionService.PredictCore(sat8DateInfos, sat9DateInfos);
         return (predictionResults, string.Empty);
     }
-
     
     private static SceneSearchRequest CreateSceneSearchRequest(int path, int row, int numResults)
     {
