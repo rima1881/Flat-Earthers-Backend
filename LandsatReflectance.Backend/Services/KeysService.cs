@@ -11,6 +11,12 @@ public class KeysService
     public string SmtpFromEmailAddress { get; set; } = GetEnvironmentVariable("FLAT_EARTHERS_SMTP_FROM_EMAIL_ADDRESS");
     public string SmtpPassword { get; set; } = GetEnvironmentVariable("FLAT_EARTHERS_SMTP_PASSWORD");
     
+    public List<string> EmailsToNotifyOnError { get; set; } = 
+        (GetOptionalEnvironmentVariable("FLAT_EARTHERS_DEBUG_EMAILS") ?? "")
+        .Split(',')
+        .Select(email => email.Trim())
+        .ToList();
+    
 
     private static string GetEnvironmentVariable(string envVarName)
     {
@@ -19,5 +25,10 @@ public class KeysService
             throw new ArgumentException($"For \"{typeof(KeysService)}\", expected the environment variable \"{envVarName}\", but was not found.");
 
         return envVar;
+    }
+    
+    private static string? GetOptionalEnvironmentVariable(string envVarName)
+    {
+        return Environment.GetEnvironmentVariable(envVarName);
     }
 }

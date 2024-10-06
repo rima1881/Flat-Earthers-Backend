@@ -135,7 +135,7 @@ public class NotificationService : BackgroundService
 
                 foreach (var notificationSenderService in notificationSenderServices)
                 {
-                    notificationSenderService.SendNotification(userInfo, target);
+                    notificationSenderService.SendTargetNotification(userInfo, target);
                 }
                 
                 _ = userTargetNotificationService.SetNotificationStatus(path, row, userGuid, target.Guid, predictionResults.PredictedAcquisitionDate, true);

@@ -38,9 +38,16 @@ public class UsgsController : ControllerBase
         [FromServices] IOptionsSnapshot<JsonOptions> jsonOptions,
         [FromQuery(Name = "path")] int path, 
         [FromQuery(Name = "row")] int row,
-        [FromQuery(Name = "numResults")] int numResults = 5)
+        [FromQuery(Name = "numResults")] int numResults = 5,
+        
+        [FromQuery(Name = "minCloudCover")] double minCloudCover = 0,
+        [FromQuery(Name = "maxCloudCover")] double maxCloudCover = 100,
+        [FromQuery(Name = "includeUnknownCloudCover")] bool includeUnknownCloudCover = true
+        )
     {
-        var sceneSearchRequest = CreatePathRowSceneSearchRequest(path, row, numResults);
+        throw new NotImplementedException();
+        
+        var sceneSearchRequest = CreatePathRowSceneSearchRequest(path, row, numResults, minCloudCover, maxCloudCover, includeUnknownCloudCover);
         var sceneSearchResponse = await m_usgsApiService.QuerySceneSearch(sceneSearchRequest);
 
         var sceneSearchData = sceneSearchResponse.Data;
@@ -122,7 +129,8 @@ public class UsgsController : ControllerBase
         return (x, y);
     }
 
-    private static SceneSearchRequest CreatePathRowSceneSearchRequest(int path, int row, int numResults)
+    private static SceneSearchRequest CreatePathRowSceneSearchRequest(int path, int row, int numResults,
+        double minCloudCover, double maxCloudCover, bool includeUnknownCloudCover)
     {
         var metadataFilter = new MetadataFilterAnd 
         {
@@ -141,10 +149,18 @@ public class UsgsController : ControllerBase
                 }
             ] 
         };
+
+        var cloudCoverFilter = new CloudCoverFilter
+        {
+            Min = (int)Math.Floor(minCloudCover),
+            Max = (int)Math.Ceiling(maxCloudCover),
+            IncludeUnknown = includeUnknownCloudCover,
+        };
         
         var sceneFilter = new SceneFilter
         {
-            MetadataFilter = metadataFilter
+            MetadataFilter = metadataFilter,
+            CloudCoverFilter = cloudCoverFilter
         };
         
         return new SceneSearchRequest

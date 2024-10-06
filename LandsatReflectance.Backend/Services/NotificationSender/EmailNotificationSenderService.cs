@@ -17,7 +17,7 @@ public class EmailNotificationSenderService : INotificationSenderService
         m_password = keysService.SmtpPassword;
     }
     
-    public void SendNotification(User user, Target target)
+    public void SendTargetNotification(User user, Target target)
     {
         var smtpClient = new SmtpClient("smtp.gmail.com", 587)
         {
@@ -35,6 +35,30 @@ public class EmailNotificationSenderService : INotificationSenderService
         mailMessage.To.Add(user.Email);
         smtpClient.Send(mailMessage);
         
-        m_logger.LogInformation($"Email send successfully to \"{user.Email}\" for target \"{target.Guid}\"");
+        m_logger.LogInformation($"Email sent successfully to \"{user.Email}\" for target \"{target.Guid}\"");
+    }
+
+    /// <remarks>
+    /// Param 'receiverInformation' should be an email.
+    /// </remarks>
+    public void SendGeneralNotification(string receiverInformation, string message, string? subject)
+    {
+        var smtpClient = new SmtpClient("smtp.gmail.com", 587)
+        {
+            Credentials = new NetworkCredential(m_fromAddress, m_password),
+            EnableSsl = true
+        };
+
+        var mailMessage = new MailMessage
+        {
+            From = new MailAddress(m_fromAddress),
+            Subject = subject ?? "",
+            Body = message 
+        };
+        
+        mailMessage.To.Add(receiverInformation);
+        smtpClient.Send(mailMessage);
+        
+        m_logger.LogInformation($"Email with subject \"{subject}\" sent successfully to \"{receiverInformation}\".");
     }
 }
