@@ -14,9 +14,6 @@ using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
 namespace LandsatReflectance.Backend.Controllers;
 
-#if !DEBUG
-[Authorize]
-#endif
 [ApiController]
 [Route("")]
 [SwaggerTag("This controller manages interactions with the USGS m2m API.")]

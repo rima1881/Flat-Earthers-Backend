@@ -1,10 +1,14 @@
-﻿using LandsatReflectance.Backend.Models;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using LandsatReflectance.Backend.Models;
 using LandsatReflectance.Backend.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LandsatReflectance.Backend.Controllers;
 
-#if !DEBUG
+#if !DISABLE_AUTH
 [Authorize]
 #endif
 [ApiController]
@@ -32,10 +36,11 @@ public class TargetController : ControllerBase
     [HttpPost("AddTargets", Name = "AddTargets")]
     public async Task<IActionResult> AddTargets([FromBody] AddTargetsRequest addTargetsRequest)
     {
-        var user = await m_userService.TryGetUser(addTargetsRequest.Email);
+        var identity = HttpContext.User.Identity as ClaimsIdentity;
+        (User? user, string errorMsg) = await AuthenticateToken(identity);
         if (user is null)
         {
-            return BadRequest($"Could not find the user with email \"{addTargetsRequest.Email}\".");
+            return Unauthorized(errorMsg);
         }
 
         m_targetsService.AddTargets(addTargetsRequest.Targets.Select(target => (user, target)));
@@ -44,12 +49,13 @@ public class TargetController : ControllerBase
 
 
     [HttpGet("GetTargets", Name = "GetTargets")]
-    public async Task<IActionResult> GetTargets([FromQuery(Name = "email")] string email)
+    public async Task<IActionResult> GetTargets([FromQuery(Name = "email")] string _)
     {
-        var user = await m_userService.TryGetUser(email);
+        var identity = HttpContext.User.Identity as ClaimsIdentity;
+        (User? user, string errorMsg) = await AuthenticateToken(identity);
         if (user is null)
         {
-            return BadRequest($"Could not find the user with email \"{email}\".");
+            return Unauthorized(errorMsg);
         }
 
         return Ok(m_targetsService.GetTargets(_ => true, guid => user.Guid == guid));
@@ -60,10 +66,11 @@ public class TargetController : ControllerBase
         [FromQuery(Name = "email")] string email, 
         [FromQuery(Name = "guid")] Guid targetGuid)
     {
-        var user = await m_userService.TryGetUser(email);
+        var identity = HttpContext.User.Identity as ClaimsIdentity;
+        (User? user, string errorMsg) = await AuthenticateToken(identity);
         if (user is null)
         {
-            return BadRequest($"Could not find the user with email \"{email}\".");
+            return Unauthorized(errorMsg);
         }
         
         var removedTarget = m_targetsService
@@ -76,5 +83,65 @@ public class TargetController : ControllerBase
         }
 
         return Ok();
+    }
+    
+    private async Task<(User? user, string errorMsg)> AuthenticateToken(ClaimsIdentity? identity)
+    {
+        if (identity is null)
+        {
+#if DEBUG
+            return (null, "No claim was provided");
+#else
+            return "";
+#endif
+        }
+
+        // asp.net core being a bitch and won't let me disable mapping for some jwt registered claim names
+        var userGuidClaim = identity.FindFirst("sub")?.Value
+            ?? identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+        
+        var userEmailClaim = identity.FindFirst("email")?.Value
+            ?? identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+        
+        var hashedPasswordClaim = identity.FindFirst("hashed_password")?.Value;
+
+        if (userGuidClaim is null || userEmailClaim is null || hashedPasswordClaim is null)
+        {
+#if DEBUG
+            return (null, "One of the claims \"Sub\", \"Email\", \"HashedPassword\" is missing");
+#else
+            return (null, String.Empty);
+#endif
+        }
+
+        var user = await m_userService.TryGetUser(userEmailClaim);
+        if (user is null)
+        {
+#if DEBUG
+            return (null, $"Could not find user with email \"{userEmailClaim}\"");
+#else
+            return (null, String.Empty);
+#endif
+        }
+
+        if (user.Guid != Guid.Parse(userGuidClaim))
+        {
+#if DEBUG
+            return (null, "The guid claim at \"Sub\" was not valid.");
+#else
+            return (null, String.Empty);
+#endif
+        }
+        
+        if (!string.Equals(user.PasswordHash.Trim(), hashedPasswordClaim.Trim()))
+        {
+#if DEBUG
+            return (null, "The hashed password claim at \"HashedPassword\" was not valid.");
+#else
+            return (null, String.Empty);
+#endif
+        }
+
+        return (user, String.Empty);
     }
 }

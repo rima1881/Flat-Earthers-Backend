@@ -34,11 +34,13 @@ public class NotificationService : BackgroundService
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+#if !DISABLE_BACKGROUND_SERVICES
         while (!stoppingToken.IsCancellationRequested)
         {
             await PerformChecks(stoppingToken);
             await Task.Delay(m_checkInterval, stoppingToken);
         }
+#endif
     }
 
     private async Task PerformChecks(CancellationToken stoppingToken)
@@ -50,11 +52,8 @@ public class NotificationService : BackgroundService
         var userTargetNotificationService = serviceScope.ServiceProvider.GetRequiredService<DbUserTargetNotificationService>();
         var notificationSenderServices = serviceScope.ServiceProvider.GetServices<INotificationSenderService>().ToList();
 
-        foreach ((int _, int _) in targetsService.GetAllRegisteredPathAndRows())
+        foreach ((int path, int row) in targetsService.GetAllRegisteredPathAndRows())
         {
-            int path = 13;
-            int row = 28;
-            
             if (stoppingToken.IsCancellationRequested)
             {
                 return;
