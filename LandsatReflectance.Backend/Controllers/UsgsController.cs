@@ -40,7 +40,11 @@ public class UsgsController : ControllerBase
         [FromQuery(Name = "row")] int row,
         [FromQuery(Name = "numResults")] int numResults = 5)
     {
-        var sceneDataArr = await PerformSceneSearch(path, row, numResults);
+        var sceneSearchRequest = CreatePathRowSceneSearchRequest(path, row, numResults);
+        var sceneSearchResponse = await m_usgsApiService.QuerySceneSearch(sceneSearchRequest);
+
+        var sceneSearchData = sceneSearchResponse.Data;
+        var sceneDataArr = sceneSearchData?.ReturnedSceneData.ToArray();
         if (sceneDataArr is null)
             return BadRequest();
 
@@ -59,67 +63,83 @@ public class UsgsController : ControllerBase
         return Ok(await UsgsDateTimePredictionService.Predict(m_usgsApiService, path, row));
     }
 
+    [HttpGet("Pixels", Name = "Pixels")]
+    public async Task<IActionResult> GetPixelGrid(
+        [FromServices] IOptionsSnapshot<JsonOptions> jsonOptions,
+        [FromQuery(Name = "entityId")] string entityId, 
+        [FromQuery(Name = "latitude")] double latitude, 
+        [FromQuery(Name = "longitude")] double longitude, 
+        [FromQuery(Name = "zoomLevel")] int zoomLevel)
+    {
+        var sceneSearchRequest = CreateByEntityIdSceneSearchRequest(entityId);
+        var sceneSearchResponse = await m_usgsApiService.QuerySceneSearch(sceneSearchRequest);
+
+        var sceneSearchData = sceneSearchResponse.Data;
+        var sceneDataArr = sceneSearchData?.ReturnedSceneData.ToArray();
+        if (sceneDataArr is null)
+            return BadRequest();
+
+        if (sceneDataArr.Length != 1)
+            return BadRequest();
+
+        SceneData sceneData = sceneDataArr[0];
+        
+        if (sceneData.BrowseInfos.Length != 1)
+            return BadRequest();
+
+        var overlayPathTemplate = sceneData.BrowseInfos[0].OverlayPath;
+        var toReturn = new List<string>();
+
+        for (int i = -1; i <= 1; i++)
+        {
+            for (int j = -1; j <= 1; j++)
+            {
+                (int x, int y) = GetTileCoordinates(latitude, longitude, zoomLevel);
+                toReturn.Add(overlayPathTemplate
+                    .Replace("{z}", zoomLevel.ToString())
+                    .Replace("{x}", (x + i).ToString())
+                    .Replace("{y}", (y + j).ToString())
+                );
+            }
+        }
+
+        return Ok(toReturn);
+    }
+    
+    
+
     
     
 #region Helper Methods
-
-    /// <remarks>
-    /// We can 'save' a list of scene 'entityId' strings on the usgs m2m api side using the endpoint 'scene-list-...'.
-    /// <br></br>
-    /// What we're doing right here is checking if we already have something in that list and returning it.
-    /// </remarks>
-    private async Task<string[]?> TryGetEntityIdListFromOnlineSave(int path, int row)
+    public static (int x, int y) GetTileCoordinates(double latitude, double longitude, int zoomLevel)
     {
-        // TODO: Add extra checks where we ensure that the number of returned data from 'scene-list-get' equals 'numResults'
-        var sceneListGetRequest = new SceneListGetRequest
-        {
-            ListId = SceneEntityIdCachingService.PathAndRowToCacheKey(path, row),
-            DatasetName = UsgsApiService.DatasetName,
-            StartingNumber = 0,
-            MaxResults = 1000,
-        };
+        // Convert latitude and longitude to radians
+        double latRad = latitude * Math.PI / 180;
 
-        var sceneListGetResponse = await m_usgsApiService.QuerySceneListGet(sceneListGetRequest);
-        return sceneListGetResponse.Data?.EntityIds;
+        // Calculate the tile numbers
+        int x = (int)Math.Floor((longitude + 180.0) / 360.0 * Math.Pow(2, zoomLevel));
+        int y = (int)Math.Floor((1.0 - Math.Log(Math.Tan(latRad) + 1.0 / Math.Cos(latRad)) / Math.PI) / 2.0 * Math.Pow(2, zoomLevel));
+
+        return (x, y);
     }
 
+    /*
     private async Task<SceneData[]?> PerformSceneSearch(int path, int row, int numResults)
     {
-        var sceneSearchRequest = CreateSceneSearchRequest(path, row, numResults);
+        var sceneSearchRequest = CreatePathRowSceneSearchRequest(path, row, numResults);
         var sceneSearchResponse = await m_usgsApiService.QuerySceneSearch(sceneSearchRequest);
 
         var sceneSearchData = sceneSearchResponse.Data;
         return sceneSearchData?.ReturnedSceneData.ToArray();
     }
-
-    private async Task<(bool isUnsuccessful, string errorMsg)> TryWriteToOnlineSave(int path, int row, string[] entityIds)
-    {
-        var sceneListAddRequest = new SceneListAddRequest
-        {
-            ListId = SceneEntityIdCachingService.PathAndRowToCacheKey(path, row),
-            DatasetName = UsgsApiService.DatasetName,
-            IdField = "entityId",
-            EntityIds = entityIds,
-            TimeToLive = "P1M", // Stored for a month
-            CheckDownloadRestriction = false,
-        };
-        var sceneListAddResponse = await m_usgsApiService.QuerySceneListAdd(sceneListAddRequest);
-        
-        if (sceneListAddResponse.Data is null)
-            return (true, "");
-
-        return sceneListAddResponse.Data.ListLength == 0
-            ? (true, "")
-            : (false, "");
-    }
-    
+     */
 #endregion
     
 
 
 #region Static Helper Methods
 
-    private static SceneSearchRequest CreateSceneSearchRequest(int path, int row, int numResults)
+    private static SceneSearchRequest CreatePathRowSceneSearchRequest(int path, int row, int numResults)
     {
         var metadataFilter = new MetadataFilterAnd 
         {
@@ -148,6 +168,34 @@ public class UsgsController : ControllerBase
         {
             DatasetName = UsgsApiService.DatasetName,
             MaxResults = numResults,
+            UseCustomization = false,
+            SceneFilter = sceneFilter,
+        };
+    }
+
+    private static SceneSearchRequest CreateByEntityIdSceneSearchRequest(string entityId)
+    {
+        var metadataFilter = new MetadataFilterAnd 
+        {
+            ChildFilters = [
+                new MetadataFilterValue  // Path filer
+                {
+                    FilterId = "5e83d14fc84c9a78",
+                    Value = entityId, 
+                    Operand = MetadataFilterValue.MetadataValueOperand.Equals
+                }
+            ] 
+        };
+        
+        var sceneFilter = new SceneFilter
+        {
+            MetadataFilter = metadataFilter
+        };
+        
+        return new SceneSearchRequest
+        {
+            DatasetName = UsgsApiService.DatasetName,
+            MaxResults = 1,
             UseCustomization = false,
             SceneFilter = sceneFilter,
         };
