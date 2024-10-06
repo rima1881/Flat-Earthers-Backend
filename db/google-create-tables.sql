@@ -3,7 +3,7 @@
 DROP TABLE
     `flatearthers-main`.`Users`,
     `flatearthers-main`.`Targets`,
-    `flatearthers-main`.`UsersTargets`;
+    `flatearthers-main`.`UsersTargets`,
     `flatearthers-main`.`Predictions`;
 
 CREATE TABLE Users (
@@ -32,9 +32,24 @@ CREATE TABLE UsersTargets (
     PRIMARY KEY (UserGuid, TargetGuid)
 );
 
-CREATE TABLE Predictions (
+CREATE TABLE Notification (
     ScenePath INT NOT NULL,
     SceneRow INT NOT NULL,
-    PasswordHash JSON,
-    PRIMARY KEY (ScenePath, SceneRow)
+    UserGuid CHAR(36) NOT NULL,
+    TargetGuid CHAR(36) NOT NULL,
+    PredictedAcquisitionDate DATETIME,
+    HasBeenNotified TINYINT(1) NOT NULL DEFAULT '0',
+    PRIMARY KEY (ScenePath, SceneRow, UserGuid, TargetGuid, PredictedAcquisitionDate)
+);
+
+CREATE TABLE UserTargetNotifications (
+    ScenePath INT NOT NULL,
+    SceneRow INT NOT NULL,
+    UserGuid CHAR(36) NOT NULL,
+    TargetGuid CHAR(36) NOT NULL,
+    PredictedAcquisitionDate DATETIME NOT NULL,
+    HasBeenNotified TINYINT(1) NOT NULL DEFAULT '0',
+    PRIMARY KEY (ScenePath, SceneRow, UserGuid, TargetGuid,PredictedAcquisitionDate),
+    CONSTRAINT FK_UserTargetNotifications_Users FOREIGN KEY (UserGuid) REFERENCES Users(UserGuid),
+    CONSTRAINT FK_UserTargetNotifications_Targets FOREIGN KEY (TargetGuid) REFERENCES Targets(TargetGuid)
 );

@@ -81,11 +81,15 @@ builder.Services.AddDbContext<DbUserService.UserDbContext>(options =>
 builder.Services.AddDbContext<DbTargetService.TargetDbContext>(options =>
     options.UseMySql(keysService.DbConnectionString, ServerVersion.AutoDetect(keysService.DbConnectionString)));
 
+builder.Services.AddDbContext<DbUserTargetNotificationService.UserTargetNotificationDbContext>(options =>
+    options.UseMySql(keysService.DbConnectionString, ServerVersion.AutoDetect(keysService.DbConnectionString)));
+
 
 builder.Services.AddMemoryCache();
 
 builder.Services.AddScoped<INotificationSenderService, EmailNotificationSenderService>();
 builder.Services.AddScoped<INotificationSenderService, SmsNotificationSenderService>();
+builder.Services.AddScoped<DbUserTargetNotificationService>();
 
 builder.Services.AddSingleton<KeysService>();
 builder.Services.AddSingleton<SceneEntityIdCachingService>();

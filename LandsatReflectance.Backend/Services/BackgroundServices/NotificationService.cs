@@ -8,6 +8,7 @@ using LandsatReflectance.Backend.Services.NotificationSender;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
 using PredictionService = LandsatReflectance.Backend.Services.UsgsDateTimePredictionService;
+using PredictionResults = LandsatReflectance.Backend.Services.UsgsDateTimePredictionService.PredictionResults;
 
 namespace LandsatReflectance.Backend.Services.BackgroundServices;
 
@@ -47,70 +48,53 @@ public class NotificationService : BackgroundService
         var usgsApiService = serviceScope.ServiceProvider.GetRequiredService<UsgsApiService>();
         var usersService = serviceScope.ServiceProvider.GetRequiredService<IUserService>();
         var targetsService = serviceScope.ServiceProvider.GetRequiredService<ITargetService>();
+        var userTargetNotificationService = serviceScope.ServiceProvider.GetRequiredService<DbUserTargetNotificationService>();
         var notificationSenderServices = serviceScope.ServiceProvider.GetServices<INotificationSenderService>().ToList();
 
-        foreach ((int path, int row) in targetsService.GetAllRegisteredPathAndRows())
+        foreach ((int _, int _) in targetsService.GetAllRegisteredPathAndRows())
         {
+            int path = 13;
+            int row = 28;
+            
             m_logger.LogInformation($"Examining path & row: {path}, {row}.");
 
             const int numResults = 10;
             var sceneSearchRequest = CreateSceneSearchRequest(path, row, numResults);
 
             var sceneSearchResponse = await usgsApiService.QuerySceneSearch(sceneSearchRequest);
-
             if (sceneSearchResponse.Data is null)
             {
-                m_logger.LogError("Some error has occurred.");
+                m_logger.LogError($"The query for path {path} and row {row} returned no values.");
                 continue;
             }
 
             var scenes = sceneSearchResponse.Data.ReturnedSceneData;
-
             if (scenes.Length < numResults)
             {
-                m_logger.LogError($"Skipped path & row: {path}, {row}. This may be an invalid scene.");
+                m_logger.LogError($"Skipped path & row: {path}, {row}. Returned {scenes.Length} < {numResults}.");
                 continue;
             }
 
-            var sat8DateInfos = scenes.Where(scene =>
-                {
-                    var satelliteMetadata = MetadataExtensions.TryGetMetadataByName(scene.Metadata, "Satellite");
-                    return satelliteMetadata is not null && int.Parse(satelliteMetadata.Value) == 8;
-                })
-                .Select(PredictionService.ToSceneDateInfo)
-                .ToArray();
-
-            if (sat8DateInfos.Length <= 2)
+            var (predictionResults, errorMsg) = CalculatePrediction(path, row, numResults, scenes);
+            if (predictionResults is null || !string.IsNullOrWhiteSpace(errorMsg))
             {
-                m_logger.LogError($"Skipped path & row: {path}, {row}. Not enough data for landsat 8, with count < 2.");
+                m_logger.LogError(errorMsg);
                 continue;
             }
-
-            var sat9DateInfos = scenes.Where(scene =>
-                {
-                    var satelliteMetadata = MetadataExtensions.TryGetMetadataByName(scene.Metadata, "Satellite");
-                    return satelliteMetadata is not null && int.Parse(satelliteMetadata.Value) == 9;
-                })
-                .Select(PredictionService.ToSceneDateInfo)
-                .ToArray();
-
-            if (sat9DateInfos.Length < 2)
-            {
-                m_logger.LogError($"Skipped path & row: {path}, {row}. Not enough data for landsat 9, with count < 2.");
-                continue;
-            }
-
-            var predictionResults = PredictionService.PredictCore(sat8DateInfos, sat9DateInfos);
-
+            
             var predictedAcquisitionDateTimespan = predictionResults.PredictedAcquisitionDate - DateTime.Now;
+
+            if (predictedAcquisitionDateTimespan.Ticks < 0)
+            {
+                return;
+            }
+            
             if (predictedAcquisitionDateTimespan < m_maxNotificationOffset)
             {
                 m_logger.LogInformation($"Path, Row ({path}, {row}) detected to be under the max notification offset.");
 
-                int pathCopy = path;
-                int rowCopy = row;
                 var userGuidsAndTargets = targetsService
-                    .GetLinkedUsers(target => target.Path == pathCopy && target.Row == rowCopy)
+                    .GetPathAndRowData(path, row)
                     .ToList();
 
                 foreach (var tuple in userGuidsAndTargets)
@@ -130,6 +114,17 @@ public class NotificationService : BackgroundService
                         {
                             continue;
                         }
+                        
+                        var notificationRecord = userTargetNotificationService.GetNotificationRecord(path, row, userGuid, target.Guid, predictionResults.PredictedAcquisitionDate);
+                        if (notificationRecord is null)
+                        {
+                            continue;
+                        }
+
+                        if (notificationRecord.HasBeenNotified)
+                        {
+                            continue;
+                        }
 
                         m_logger.LogInformation(
                             $"User \"{userInfo.Email}\" ({userInfo.Guid}) for target \"{target.Guid}\" " +
@@ -139,13 +134,49 @@ public class NotificationService : BackgroundService
                         {
                             notificationSenderService.SendNotification(userInfo, target);
                         }
+                        
+                        _ = userTargetNotificationService.SetNotificationStatus(path, row, userGuid, target.Guid, predictionResults.PredictedAcquisitionDate, true);
                     }
                 }
             }
         }
     }
-    
-    
+
+
+    private static (PredictionResults?, string errorMsg) CalculatePrediction(int path, int row, int numResults, SceneData[] scenes)
+    {
+
+        var sat8DateInfos = scenes.Where(scene =>
+            {
+                var satelliteMetadata = MetadataExtensions.TryGetMetadataByName(scene.Metadata, "Satellite");
+                return satelliteMetadata is not null && int.Parse(satelliteMetadata.Value) == 8;
+            })
+            .Select(PredictionService.ToSceneDateInfo)
+            .ToArray();
+
+        if (sat8DateInfos.Length <= 2)
+        {
+            string errorMsg = $"Skipped path & row: {path}, {row}. Not enough data for landsat 8, with count < 2.";
+            return (null, errorMsg);
+        }
+
+        var sat9DateInfos = scenes.Where(scene =>
+            {
+                var satelliteMetadata = MetadataExtensions.TryGetMetadataByName(scene.Metadata, "Satellite");
+                return satelliteMetadata is not null && int.Parse(satelliteMetadata.Value) == 9;
+            })
+            .Select(PredictionService.ToSceneDateInfo)
+            .ToArray();
+
+        if (sat9DateInfos.Length < 2)
+        {
+            string errorMsg = $"Skipped path & row: {path}, {row}. Not enough data for landsat 9, with count < 2.";
+            return (null, errorMsg);
+        }
+
+        var predictionResults = PredictionService.PredictCore(sat8DateInfos, sat9DateInfos);
+        return (predictionResults, string.Empty);
+    }
 
     
     private static SceneSearchRequest CreateSceneSearchRequest(int path, int row, int numResults)
@@ -162,26 +193,7 @@ public class NotificationService : BackgroundService
             Value = row.ToString(),
             Operand = MetadataFilterValue.MetadataValueOperand.Equals
         };
-        /*
-        var satelliteFilter = new MetadataFilterOr
-        {
-            ChildFilters =
-            [
-                new MetadataFilterValue
-                {
-                    FilterId = "5e83d14ff1eda1b8",
-                    Value = "8",
-                    Operand = MetadataFilterValue.MetadataValueOperand.Equals
-                },
-                new MetadataFilterValue
-                {
-                    FilterId = "5e83d14ff1eda1b8",
-                    Value = "9",
-                    Operand = MetadataFilterValue.MetadataValueOperand.Equals
-                }
-            ]
-        };
-         */
+        
         var metadataFilter = new MetadataFilterAnd
         {
             ChildFilters = [ pathFilter, rowFilter ]
