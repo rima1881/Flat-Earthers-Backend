@@ -106,12 +106,11 @@ public class UsgsController : ControllerBase
         return Ok(toReturn);
     }
     
-    
 
     
-    
-#region Helper Methods
-    public static (int x, int y) GetTileCoordinates(double latitude, double longitude, int zoomLevel)
+#region Static Helper Methods
+
+    private static (int x, int y) GetTileCoordinates(double latitude, double longitude, int zoomLevel)
     {
         // Convert latitude and longitude to radians
         double latRad = latitude * Math.PI / 180;
@@ -122,22 +121,6 @@ public class UsgsController : ControllerBase
 
         return (x, y);
     }
-
-    /*
-    private async Task<SceneData[]?> PerformSceneSearch(int path, int row, int numResults)
-    {
-        var sceneSearchRequest = CreatePathRowSceneSearchRequest(path, row, numResults);
-        var sceneSearchResponse = await m_usgsApiService.QuerySceneSearch(sceneSearchRequest);
-
-        var sceneSearchData = sceneSearchResponse.Data;
-        return sceneSearchData?.ReturnedSceneData.ToArray();
-    }
-     */
-#endregion
-    
-
-
-#region Static Helper Methods
 
     private static SceneSearchRequest CreatePathRowSceneSearchRequest(int path, int row, int numResults)
     {
@@ -178,7 +161,7 @@ public class UsgsController : ControllerBase
         var metadataFilter = new MetadataFilterAnd 
         {
             ChildFilters = [
-                new MetadataFilterValue  // Path filer
+                new MetadataFilterValue  // 'Entity ID' or 'Landsat Scene Identifier' (thats what its officially called)
                 {
                     FilterId = "5e83d14fc84c9a78",
                     Value = entityId, 
@@ -200,6 +183,5 @@ public class UsgsController : ControllerBase
             SceneFilter = sceneFilter,
         };
     }
-    
 #endregion
 }
