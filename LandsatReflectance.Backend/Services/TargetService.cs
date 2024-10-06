@@ -28,6 +28,8 @@ public interface ITargetService
         Expression<Func<Guid, bool>>? userGuidPredicate = null);
 
     public IEnumerable<(Guid, IEnumerable<Target>)> GetLinkedUsers(Expression<Func<Target, bool>> targetPredicate);
+
+    public IEnumerable<(int path, int row)> GetAllRegisteredPathAndRows();
     
     [Obsolete("Use this method with care. Only meant for testing.")]
     public void ClearAll();
@@ -128,6 +130,11 @@ public class FileTargetService : ITargetService
     }
 
     public IEnumerable<(Guid, IEnumerable<Target>)> GetLinkedUsers(Expression<Func<Target, bool>> targetPredicate)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<(int path, int row)> GetAllRegisteredPathAndRows()
     {
         throw new NotImplementedException();
     }
@@ -377,6 +384,18 @@ public class DbTargetService : ITargetService
         }
 
         return listToReturn;
+    }
+
+    public IEnumerable<(int path, int row)> GetAllRegisteredPathAndRows()
+    {
+        var targets = m_targetDbContext.Targets.AsNoTracking().ToList();
+            
+        return targets
+            .Select(target => (target.Path, target.Row))
+            .Distinct()
+            .OrderBy(target => target.Path)
+            .ThenBy(target => target.Row)
+            .ToList();
     }
 
     public void ClearAll()

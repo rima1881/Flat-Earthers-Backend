@@ -33,13 +33,6 @@ public class MetadataFilterAndConverter : JsonConverter<MetadataFilterAnd>
         writer.WriteStartArray("childFilters");
         foreach (var childFilter in metadataFilterAnd.ChildFilters)
         {
-            _ = childFilter.GetType() switch
-            {
-                var t when t == typeof(MetadataFilterValue) => 0,
-                var t when t == typeof(MetadataFilterBetween) => 0,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-            
             writer.WriteRawValue(JsonSerializer.Serialize(childFilter, childFilter.GetType(), options));
         }
         writer.WriteEndArray();

@@ -6,6 +6,7 @@ using LandsatReflectance.Backend.Middleware;
 using LandsatReflectance.Backend.Models.UsgsApi.Endpoints;
 using LandsatReflectance.Backend.Services;
 using LandsatReflectance.Backend.Services.BackgroundServices;
+using LandsatReflectance.Backend.Services.NotificationSender;
 using LandsatReflectance.Backend.Utils;
 using LandsatReflectance.Backend.Utils.SourceGenerators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -82,6 +83,10 @@ builder.Services.AddDbContext<DbTargetService.TargetDbContext>(options =>
 
 
 builder.Services.AddMemoryCache();
+
+builder.Services.AddScoped<INotificationSenderService, EmailNotificationSenderService>();
+builder.Services.AddScoped<INotificationSenderService, SmsNotificationSenderService>();
+
 builder.Services.AddSingleton<KeysService>();
 builder.Services.AddSingleton<SceneEntityIdCachingService>();
 

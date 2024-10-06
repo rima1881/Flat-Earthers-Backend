@@ -1,9 +1,8 @@
 ﻿using LandsatReflectance.Backend.Models;
-using Target = Org.BouncyCastle.Asn1.X509.Target;
 
 namespace LandsatReflectance.Backend.Services.NotificationSender;
 
-public interface INotificationSender
+public interface INotificationSenderService
 {
     public void SendNotification(User user, Target target);
 }

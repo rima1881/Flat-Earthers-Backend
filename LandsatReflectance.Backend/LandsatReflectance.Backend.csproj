@@ -17,6 +17,7 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.7.3" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.1.0" />
+        <PackageReference Include="System.Net.Mail" Version="1.0.0-rtm-00002" />
     </ItemGroup>
 
     <ItemGroup>

@@ -6,8 +6,10 @@ public class KeysService
     public string UsgsAppToken { get; set; } = GetEnvironmentVariable("LANDSAT_REFLECTANCE_USGS_TOKEN");
     
     public string AuthSecretKey { get; set; } = GetEnvironmentVariable("FLAT_EARTHERS_AUTH_SECRET_KEY");
-    
     public string DbConnectionString { get; set; } = GetEnvironmentVariable("FLAT_EARTHERS_DB_CONNECTION_STRING");
+    
+    public string SmtpFromEmailAddress { get; set; } = GetEnvironmentVariable("FLAT_EARTHERS_SMTP_FROM_EMAIL_ADDRESS");
+    public string SmtpPassword { get; set; } = GetEnvironmentVariable("FLAT_EARTHERS_SMTP_PASSWORD");
     
 
     private static string GetEnvironmentVariable(string envVarName)
