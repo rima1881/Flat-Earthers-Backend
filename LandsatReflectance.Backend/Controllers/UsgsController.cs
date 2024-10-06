@@ -45,8 +45,6 @@ public class UsgsController : ControllerBase
         [FromQuery(Name = "includeUnknownCloudCover")] bool includeUnknownCloudCover = true
         )
     {
-        throw new NotImplementedException();
-        
         var sceneSearchRequest = CreatePathRowSceneSearchRequest(path, row, numResults, minCloudCover, maxCloudCover, includeUnknownCloudCover);
         var sceneSearchResponse = await m_usgsApiService.QuerySceneSearch(sceneSearchRequest);
 

@@ -1,10 +1,10 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using System.Text.Json;
 using LandsatReflectance.Backend.Models;
 using LandsatReflectance.Backend.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace LandsatReflectance.Backend.Controllers;
 
@@ -16,12 +16,16 @@ namespace LandsatReflectance.Backend.Controllers;
 public class TargetController : ControllerBase
 {
     private ILogger<TargetController> m_logger;
+    private JsonSerializerOptions m_jsonSerializerOptions;
+    
     private IUserService m_userService;
     private ITargetService m_targetsService;
     
-    public TargetController(ILogger<TargetController> logger, IUserService userService, ITargetService targetService)
+    public TargetController(ILogger<TargetController> logger, IOptions<JsonOptions> jsonOptions, IUserService userService, ITargetService targetService)
     {
         m_logger = logger;
+        m_jsonSerializerOptions = jsonOptions.Value.JsonSerializerOptions;
+        
         m_userService = userService;
         m_targetsService = targetService;
     }
@@ -84,6 +88,46 @@ public class TargetController : ControllerBase
 
         return Ok();
     }
+    
+    
+    public class EditTargetRequest 
+    {
+        public Guid TargetGuid { get; set; }
+        public double? NewMinCloudCover { get; set; }
+        public double? NewMaxCloudCover { get; set; }
+        public TimeSpan? NewNotificationOffset { get; set; }
+    }
+
+    [HttpPost("EditTarget", Name = "EditTarget")]
+    public async Task<IActionResult> EditTargetInfo([FromBody] EditTargetRequest editTargetRequest)
+    {
+        var identity = HttpContext.User.Identity as ClaimsIdentity;
+        (User? user, string errorMsg) = await AuthenticateToken(identity);
+        if (user is null)
+        {
+            return Unauthorized(errorMsg);
+        }
+
+        Action<Target> editTarget = target =>
+        {
+            target.MinCloudCover = editTargetRequest.NewMinCloudCover ?? target.MinCloudCover;
+            target.MaxCloudCover = editTargetRequest.NewMaxCloudCover ?? target.MaxCloudCover;
+            target.NotificationOffset = editTargetRequest.NewNotificationOffset ?? target.NotificationOffset;
+        };
+        
+        var editedTargets = m_targetsService.TryEditTarget(editTarget, 
+            target => target.Guid == editTargetRequest.TargetGuid, 
+            guid => guid == user.Guid)
+            .ToList();
+
+        if (editedTargets.Count != 1)
+        {
+            return BadRequest();
+        }
+
+        return Ok(JsonSerializer.Serialize(editedTargets[0], m_jsonSerializerOptions));
+    }
+    
     
     private async Task<(User? user, string errorMsg)> AuthenticateToken(ClaimsIdentity? identity)
     {
