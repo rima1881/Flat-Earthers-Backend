@@ -88,6 +88,9 @@ builder.Services.AddDbContext<DbTargetService.TargetDbContext>(options =>
 builder.Services.AddDbContext<DbUserTargetNotificationService.UserTargetNotificationDbContext>(options =>
     options.UseMySql(keysService.DbConnectionString, ServerVersion.AutoDetect(keysService.DbConnectionString)));
 
+builder.Services.AddDbContext<DbPredictionService.PredictionDbContext>(options =>
+    options.UseMySql(keysService.DbConnectionString, ServerVersion.AutoDetect(keysService.DbConnectionString)));
+
 
 builder.Services.AddMemoryCache();
 
@@ -100,6 +103,7 @@ builder.Services.AddSingleton<SceneEntityIdCachingService>();
 
 builder.Services.AddScoped<IUserService, DbUserService>();
 builder.Services.AddScoped<ITargetService, DbTargetService>();
+builder.Services.AddScoped<DbPredictionService>();
 
 builder.Services.AddScoped<UsgsApiService>();
 
@@ -113,6 +117,12 @@ if (builder.Environment.IsDevelopment())
 }
 
 builder.Services.AddCors();
+
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5029);
+});
 
 
 

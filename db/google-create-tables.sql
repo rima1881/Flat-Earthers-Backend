@@ -53,3 +53,10 @@ CREATE TABLE UserTargetNotifications (
     CONSTRAINT FK_UserTargetNotifications_Users FOREIGN KEY (UserGuid) REFERENCES Users(UserGuid),
     CONSTRAINT FK_UserTargetNotifications_Targets FOREIGN KEY (TargetGuid) REFERENCES Targets(TargetGuid)
 );
+
+CREATE TABLE Predictions (
+    ScenePath INT NOT NULL,
+    SceneRow INT NOT NULL,
+    PredictionDataJson JSON,
+    PRIMARY KEY (ScenePath, SceneRow)
+);

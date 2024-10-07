@@ -20,14 +20,17 @@ public class TargetController : ControllerBase
     
     private IUserService m_userService;
     private ITargetService m_targetsService;
+    private DbPredictionService m_dbPredictionService;
     
-    public TargetController(ILogger<TargetController> logger, IOptions<JsonOptions> jsonOptions, IUserService userService, ITargetService targetService)
+    public TargetController(ILogger<TargetController> logger, IOptions<JsonOptions> jsonOptions, IUserService userService, 
+        ITargetService targetService, DbPredictionService dbPredictionService)
     {
         m_logger = logger;
         m_jsonSerializerOptions = jsonOptions.Value.JsonSerializerOptions;
         
         m_userService = userService;
         m_targetsService = targetService;
+        m_dbPredictionService = dbPredictionService;
     }
 
 
@@ -62,7 +65,8 @@ public class TargetController : ControllerBase
             return Unauthorized(errorMsg);
         }
 
-        return Ok(m_targetsService.GetTargets(_ => true, guid => user.Guid == guid));
+        var targetsWithPredictions = m_dbPredictionService.GetTargetsWithPredictions(user.Guid);
+        return Ok(JsonSerializer.Serialize(targetsWithPredictions, m_jsonSerializerOptions));
     }
 
     [HttpDelete("DeleteTarget", Name = "DeleteTarget")]
