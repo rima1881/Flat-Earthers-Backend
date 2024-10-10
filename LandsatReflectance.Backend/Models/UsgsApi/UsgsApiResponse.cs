@@ -13,6 +13,6 @@ public class UsgsApiResponse<T> where T : class, IUsgsApiResponseData
     public int RequestId { get; set; }
     public string Version { get; set; } = string.Empty;
     public T? Data { get; set; } 
-    public int? ErrorCode { get; set; }
+    public string? ErrorCode { get; set; }
     public string? ErrorMessage { get; set; }
 }

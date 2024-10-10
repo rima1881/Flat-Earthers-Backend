@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Text.Json;
 
@@ -6,6 +7,7 @@ using LandsatReflectance.Backend.Middleware;
 using LandsatReflectance.Backend.Models.UsgsApi.Endpoints;
 using LandsatReflectance.Backend.Services;
 using LandsatReflectance.Backend.Services.BackgroundServices;
+using LandsatReflectance.Backend.Services.NotificationSender;
 using LandsatReflectance.Backend.Utils;
 using LandsatReflectance.Backend.Utils.SourceGenerators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -35,7 +37,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 
-#if !DEBUG
+#if !DISABLE_AUTH 
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -48,12 +50,15 @@ builder.Services.AddAuthentication(options =>
         
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = false,
-            ValidateAudience = false,
+            ValidateIssuer = true,
+            ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-            ClockSkew = TimeSpan.Zero
+            
+            ValidIssuer = "FlatEarthers",
+            ValidAudience = "FlatEarthers",
+            ClockSkew = TimeSpan.Zero,
+            IssuerSigningKey = new SymmetricSecurityKey(key)
         };
 
         options.Events = new JwtBearerEvents
@@ -80,13 +85,25 @@ builder.Services.AddDbContext<DbUserService.UserDbContext>(options =>
 builder.Services.AddDbContext<DbTargetService.TargetDbContext>(options =>
     options.UseMySql(keysService.DbConnectionString, ServerVersion.AutoDetect(keysService.DbConnectionString)));
 
+builder.Services.AddDbContext<DbUserTargetNotificationService.UserTargetNotificationDbContext>(options =>
+    options.UseMySql(keysService.DbConnectionString, ServerVersion.AutoDetect(keysService.DbConnectionString)));
+
+builder.Services.AddDbContext<DbPredictionService.PredictionDbContext>(options =>
+    options.UseMySql(keysService.DbConnectionString, ServerVersion.AutoDetect(keysService.DbConnectionString)));
+
 
 builder.Services.AddMemoryCache();
+
+builder.Services.AddScoped<INotificationSenderService, EmailNotificationSenderService>();
+builder.Services.AddScoped<INotificationSenderService, SmsNotificationSenderService>();
+builder.Services.AddScoped<DbUserTargetNotificationService>();
+
 builder.Services.AddSingleton<KeysService>();
 builder.Services.AddSingleton<SceneEntityIdCachingService>();
 
 builder.Services.AddScoped<IUserService, DbUserService>();
 builder.Services.AddScoped<ITargetService, DbTargetService>();
+builder.Services.AddScoped<DbPredictionService>();
 
 builder.Services.AddScoped<UsgsApiService>();
 
@@ -100,6 +117,12 @@ if (builder.Environment.IsDevelopment())
 }
 
 builder.Services.AddCors();
+
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5029);
+});
 
 
 

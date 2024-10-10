@@ -2,3 +2,6 @@
 bin
 obj
 LandsatReflectance.sln.DotSettings.user
+
+Dockerfile
+.dockerignore

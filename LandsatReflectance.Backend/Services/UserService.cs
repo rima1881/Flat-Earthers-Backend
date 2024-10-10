@@ -16,6 +16,8 @@ public interface IUserService
 
     public Task<User?> TryGetUser(string email);
     
+    public Task<User?> TryGetUserByGuid(Guid guid);
+    
     public Task<User?> TryRemoveUser(string email);
     
 #if DEBUG
@@ -71,6 +73,11 @@ public class FileUserService : IUserService
     {
         var result = m_users.FirstOrDefault(user => string.Equals(user.Email, email, StringComparison.InvariantCultureIgnoreCase));
         return Task.FromResult(result);
+    }
+
+    public Task<User?> TryGetUserByGuid(Guid guid)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<User?> TryRemoveUser(string email)
@@ -226,6 +233,21 @@ public class DbUserService : IUserService
         if (users.Count > 1)
         {
             m_logger.LogCritical($"There were multiple users with email \"{email}\" were found.");
+        }
+
+        return Task.FromResult(users.FirstOrDefault());
+    }
+
+    public Task<User?> TryGetUserByGuid(Guid guid)
+    {
+        var users = m_userDbContext.Users
+            .AsNoTracking()
+            .Where(user => user.Guid == guid)
+            .ToList();
+
+        if (users.Count > 1)
+        {
+            m_logger.LogCritical($"There were multiple users with guid \"{guid}\" were found.");
         }
 
         return Task.FromResult(users.FirstOrDefault());

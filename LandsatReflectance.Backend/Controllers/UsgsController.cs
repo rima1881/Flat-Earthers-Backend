@@ -14,16 +14,11 @@ using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
 namespace LandsatReflectance.Backend.Controllers;
 
-#if !DEBUG
-[Authorize]
-#endif
 [ApiController]
 [Route("")]
 [SwaggerTag("This controller manages interactions with the USGS m2m API.")]
 public class UsgsController : ControllerBase
 {
-    private const string DatasetName = "landsat_ot_c2_l2";
-    
     private readonly UsgsApiService m_usgsApiService;
     private readonly SceneEntityIdCachingService m_sceneEntityIdCachingService;
     private readonly JsonSerializerOptions m_jsonSerializerOptions;
@@ -43,9 +38,18 @@ public class UsgsController : ControllerBase
         [FromServices] IOptionsSnapshot<JsonOptions> jsonOptions,
         [FromQuery(Name = "path")] int path, 
         [FromQuery(Name = "row")] int row,
-        [FromQuery(Name = "numResults")] int numResults = 5)
+        [FromQuery(Name = "numResults")] int numResults = 5,
+        
+        [FromQuery(Name = "minCloudCover")] double minCloudCover = 0,
+        [FromQuery(Name = "maxCloudCover")] double maxCloudCover = 100,
+        [FromQuery(Name = "includeUnknownCloudCover")] bool includeUnknownCloudCover = true
+        )
     {
-        var sceneDataArr = await PerformSceneSearch(path, row, numResults);
+        var sceneSearchRequest = CreatePathRowSceneSearchRequest(path, row, numResults, minCloudCover, maxCloudCover, includeUnknownCloudCover);
+        var sceneSearchResponse = await m_usgsApiService.QuerySceneSearch(sceneSearchRequest);
+
+        var sceneSearchData = sceneSearchResponse.Data;
+        var sceneDataArr = sceneSearchData?.ReturnedSceneData.ToArray();
         if (sceneDataArr is null)
             return BadRequest();
 
@@ -64,67 +68,67 @@ public class UsgsController : ControllerBase
         return Ok(await UsgsDateTimePredictionService.Predict(m_usgsApiService, path, row));
     }
 
-    
-    
-#region Helper Methods
-
-    /// <remarks>
-    /// We can 'save' a list of scene 'entityId' strings on the usgs m2m api side using the endpoint 'scene-list-...'.
-    /// <br></br>
-    /// What we're doing right here is checking if we already have something in that list and returning it.
-    /// </remarks>
-    private async Task<string[]?> TryGetEntityIdListFromOnlineSave(int path, int row)
+    [HttpGet("Pixels", Name = "Pixels")]
+    public async Task<IActionResult> GetPixelGrid(
+        [FromServices] IOptionsSnapshot<JsonOptions> jsonOptions,
+        [FromQuery(Name = "entityId")] string entityId, 
+        [FromQuery(Name = "latitude")] double latitude, 
+        [FromQuery(Name = "longitude")] double longitude, 
+        [FromQuery(Name = "zoomLevel")] int zoomLevel)
     {
-        // TODO: Add extra checks where we ensure that the number of returned data from 'scene-list-get' equals 'numResults'
-        var sceneListGetRequest = new SceneListGetRequest
-        {
-            ListId = SceneEntityIdCachingService.PathAndRowToCacheKey(path, row),
-            DatasetName = DatasetName,
-            StartingNumber = 0,
-            MaxResults = 1000,
-        };
-
-        var sceneListGetResponse = await m_usgsApiService.QuerySceneListGet(sceneListGetRequest);
-        return sceneListGetResponse.Data?.EntityIds;
-    }
-
-    private async Task<SceneData[]?> PerformSceneSearch(int path, int row, int numResults)
-    {
-        var sceneSearchRequest = CreateSceneSearchRequest(path, row, numResults);
+        var sceneSearchRequest = CreateByEntityIdSceneSearchRequest(entityId);
         var sceneSearchResponse = await m_usgsApiService.QuerySceneSearch(sceneSearchRequest);
 
         var sceneSearchData = sceneSearchResponse.Data;
-        return sceneSearchData?.ReturnedSceneData.ToArray();
-    }
+        var sceneDataArr = sceneSearchData?.ReturnedSceneData.ToArray();
+        if (sceneDataArr is null)
+            return BadRequest();
 
-    private async Task<(bool isUnsuccessful, string errorMsg)> TryWriteToOnlineSave(int path, int row, string[] entityIds)
-    {
-        var sceneListAddRequest = new SceneListAddRequest
-        {
-            ListId = SceneEntityIdCachingService.PathAndRowToCacheKey(path, row),
-            DatasetName = DatasetName,
-            IdField = "entityId",
-            EntityIds = entityIds,
-            TimeToLive = "P1M", // Stored for a month
-            CheckDownloadRestriction = false,
-        };
-        var sceneListAddResponse = await m_usgsApiService.QuerySceneListAdd(sceneListAddRequest);
+        if (sceneDataArr.Length != 1)
+            return BadRequest();
+
+        SceneData sceneData = sceneDataArr[0];
         
-        if (sceneListAddResponse.Data is null)
-            return (true, "");
+        if (sceneData.BrowseInfos.Length != 1)
+            return BadRequest();
 
-        return sceneListAddResponse.Data.ListLength == 0
-            ? (true, "")
-            : (false, "");
+        var overlayPathTemplate = sceneData.BrowseInfos[0].OverlayPath;
+        var toReturn = new List<string>();
+
+        for (int i = -1; i <= 1; i++)
+        {
+            for (int j = -1; j <= 1; j++)
+            {
+                (int x, int y) = GetTileCoordinates(latitude, longitude, zoomLevel);
+                toReturn.Add(overlayPathTemplate
+                    .Replace("{z}", zoomLevel.ToString())
+                    .Replace("{x}", (x + i).ToString())
+                    .Replace("{y}", (y + j).ToString())
+                );
+            }
+        }
+
+        return Ok(toReturn);
     }
     
-#endregion
+
     
-
-
 #region Static Helper Methods
 
-    private static SceneSearchRequest CreateSceneSearchRequest(int path, int row, int numResults)
+    private static (int x, int y) GetTileCoordinates(double latitude, double longitude, int zoomLevel)
+    {
+        // Convert latitude and longitude to radians
+        double latRad = latitude * Math.PI / 180;
+
+        // Calculate the tile numbers
+        int x = (int)Math.Floor((longitude + 180.0) / 360.0 * Math.Pow(2, zoomLevel));
+        int y = (int)Math.Floor((1.0 - Math.Log(Math.Tan(latRad) + 1.0 / Math.Cos(latRad)) / Math.PI) / 2.0 * Math.Pow(2, zoomLevel));
+
+        return (x, y);
+    }
+
+    private static SceneSearchRequest CreatePathRowSceneSearchRequest(int path, int row, int numResults,
+        double minCloudCover, double maxCloudCover, bool includeUnknownCloudCover)
     {
         var metadataFilter = new MetadataFilterAnd 
         {
@@ -143,6 +147,42 @@ public class UsgsController : ControllerBase
                 }
             ] 
         };
+
+        var cloudCoverFilter = new CloudCoverFilter
+        {
+            Min = (int)Math.Floor(minCloudCover),
+            Max = (int)Math.Ceiling(maxCloudCover),
+            IncludeUnknown = includeUnknownCloudCover,
+        };
+        
+        var sceneFilter = new SceneFilter
+        {
+            MetadataFilter = metadataFilter,
+            CloudCoverFilter = cloudCoverFilter
+        };
+        
+        return new SceneSearchRequest
+        {
+            DatasetName = UsgsApiService.DatasetName,
+            MaxResults = numResults,
+            UseCustomization = false,
+            SceneFilter = sceneFilter,
+        };
+    }
+
+    private static SceneSearchRequest CreateByEntityIdSceneSearchRequest(string entityId)
+    {
+        var metadataFilter = new MetadataFilterAnd 
+        {
+            ChildFilters = [
+                new MetadataFilterValue  // 'Entity ID' or 'Landsat Scene Identifier' (thats what its officially called)
+                {
+                    FilterId = "5e83d14fc84c9a78",
+                    Value = entityId, 
+                    Operand = MetadataFilterValue.MetadataValueOperand.Equals
+                }
+            ] 
+        };
         
         var sceneFilter = new SceneFilter
         {
@@ -151,12 +191,11 @@ public class UsgsController : ControllerBase
         
         return new SceneSearchRequest
         {
-            DatasetName = DatasetName,
-            MaxResults = numResults,
+            DatasetName = UsgsApiService.DatasetName,
+            MaxResults = 1,
             UseCustomization = false,
             SceneFilter = sceneFilter,
         };
     }
-    
 #endregion
 }

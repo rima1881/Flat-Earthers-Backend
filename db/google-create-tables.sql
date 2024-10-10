@@ -3,7 +3,8 @@
 DROP TABLE
     `flatearthers-main`.`Users`,
     `flatearthers-main`.`Targets`,
-    `flatearthers-main`.`UsersTargets`;
+    `flatearthers-main`.`UsersTargets`,
+    `flatearthers-main`.`Predictions`;
 
 CREATE TABLE Users (
     UserGuid CHAR(36) PRIMARY KEY,
@@ -29,4 +30,33 @@ CREATE TABLE UsersTargets (
     CONSTRAINT FK_UsersTargets_Users FOREIGN KEY (UserGuid) REFERENCES Users(UserGuid),
     CONSTRAINT FK_UsersTargets_Targets FOREIGN KEY (TargetGuid) REFERENCES Targets(TargetGuid),
     PRIMARY KEY (UserGuid, TargetGuid)
+);
+
+CREATE TABLE Notification (
+    ScenePath INT NOT NULL,
+    SceneRow INT NOT NULL,
+    UserGuid CHAR(36) NOT NULL,
+    TargetGuid CHAR(36) NOT NULL,
+    PredictedAcquisitionDate DATETIME,
+    HasBeenNotified TINYINT(1) NOT NULL DEFAULT '0',
+    PRIMARY KEY (ScenePath, SceneRow, UserGuid, TargetGuid, PredictedAcquisitionDate)
+);
+
+CREATE TABLE UserTargetNotifications (
+    ScenePath INT NOT NULL,
+    SceneRow INT NOT NULL,
+    UserGuid CHAR(36) NOT NULL,
+    TargetGuid CHAR(36) NOT NULL,
+    PredictedAcquisitionDate DATETIME NOT NULL,
+    HasBeenNotified TINYINT(1) NOT NULL DEFAULT '0',
+    PRIMARY KEY (ScenePath, SceneRow, UserGuid, TargetGuid,PredictedAcquisitionDate),
+    CONSTRAINT FK_UserTargetNotifications_Users FOREIGN KEY (UserGuid) REFERENCES Users(UserGuid),
+    CONSTRAINT FK_UserTargetNotifications_Targets FOREIGN KEY (TargetGuid) REFERENCES Targets(TargetGuid)
+);
+
+CREATE TABLE Predictions (
+    ScenePath INT NOT NULL,
+    SceneRow INT NOT NULL,
+    PredictionDataJson JSON,
+    PRIMARY KEY (ScenePath, SceneRow)
 );

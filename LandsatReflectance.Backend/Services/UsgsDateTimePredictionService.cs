@@ -24,6 +24,18 @@ public static class UsgsDateTimePredictionService
         public required double PredictedAcquisitionDateConfidence { get; init; }
         
         public required int PredictedSatellite { get; init; }
+
+        
+        public static PredictionResults Default = new()
+        {
+            PredictedPublishDate = default,
+            AverageTimeSpanBetweenPublishDates = default,
+            PredictedPublishDateConfidence = 0,
+            PredictedAcquisitionDate = default,
+            AverageTimeSpanBetweenAcquisitionDates = default,
+            PredictedAcquisitionDateConfidence = 0,
+            PredictedSatellite = 0
+        };
     }
 
     public static async Task<PredictionResults> Predict(UsgsApiService usgsApiService, int path, int row, int numDataEntries = 10)
@@ -100,35 +112,36 @@ public static class UsgsDateTimePredictionService
             .Select(ToSceneDateInfo)
             .ToArray();
         
-        SceneDateInfo ToSceneDateInfo(SceneData sceneData)
+    }
+    
+    internal static SceneDateInfo ToSceneDateInfo(SceneData sceneData)
+    {
+        var publishDate = sceneData.PublishDate;
+
+        DateTime? acquisitionStartDateTime = null;
+        DateTime? acquisitionEndDateTime = null;
+
+        foreach (var metadata in sceneData.Metadata)
         {
-            var publishDate = sceneData.PublishDate;
-
-            DateTime? acquisitionStartDateTime = null;
-            DateTime? acquisitionEndDateTime = null;
-
-            foreach (var metadata in sceneData.Metadata)
-            {
-                if (string.Equals(metadata.Id, "5e83d150f3ba8369"))
-                    acquisitionStartDateTime = DateTime.Parse(metadata.Value);
-                
-                if (string.Equals(metadata.Id, "5e83d1506939e64b"))
-                    acquisitionEndDateTime = DateTime.Parse(metadata.Value);
-            }
+            if (string.Equals(metadata.Id, "5e83d150f3ba8369"))
+                acquisitionStartDateTime = DateTime.Parse(metadata.Value);
             
-            if (acquisitionStartDateTime is null)
-                throw new ArgumentException($"Could not find \"Start Time\" metadata for scene entity id \"{sceneData.EntityId}\"");
-                    
-            if (acquisitionEndDateTime is null)
-                throw new ArgumentException($"Could not find \"End Time\" metadata for scene entity id \"{sceneData.EntityId}\"");
-
-            return new SceneDateInfo
-            {
-                PublishDate = publishDate,
-                AcquisitionStartDateTime = acquisitionStartDateTime.Value,
-                AcquisitionEndDateTime = acquisitionEndDateTime.Value,
-            };
+            if (string.Equals(metadata.Id, "5e83d1506939e64b"))
+                acquisitionEndDateTime = DateTime.Parse(metadata.Value);
         }
+        
+        if (acquisitionStartDateTime is null)
+            throw new ArgumentException($"Could not find \"Start Time\" metadata for scene entity id \"{sceneData.EntityId}\"");
+                
+        if (acquisitionEndDateTime is null)
+            throw new ArgumentException($"Could not find \"End Time\" metadata for scene entity id \"{sceneData.EntityId}\"");
+
+        return new SceneDateInfo
+        {
+            PublishDate = publishDate,
+            AcquisitionStartDateTime = acquisitionStartDateTime.Value,
+            AcquisitionEndDateTime = acquisitionEndDateTime.Value,
+        };
     }
 
     private static (SceneSearchRequest satellite8DataRequest, SceneSearchRequest satellite9DataRequest) GetRequests(
